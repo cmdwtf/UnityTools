@@ -1,0 +1,16 @@
+{
+  "name": "cmdwtf.UnityTools.Editor",
+  "rootNamespace": "cmdwtf.UnityTools.Editor",
+  "references": [
+    "GUID:c5269df1601f2694ea7cc39324c42246"
+  ],
+  "includePlatforms": [ "Editor" ],
+  "excludePlatforms": [],
+  "allowUnsafeCode": false,
+  "overrideReferences": false,
+  "precompiledReferences": [],
+  "autoReferenced": true,
+  "defineConstraints": [],
+  "versionDefines": [],
+  "noEngineReferences": false
+}

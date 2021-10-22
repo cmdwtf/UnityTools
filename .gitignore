@@ -1,0 +1,4 @@
+*.resharper
+*.cache
+*.suo
+*.user

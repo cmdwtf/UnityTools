@@ -1,0 +1,30 @@
+{
+  "name": "wtf.cmd.tools",
+  "version": "0.0.1",
+  "displayName": "cmdwtf Unity Tools",
+  "description": "A small collection of tools that multiple projects make use of.",
+  "category": "Libraries",
+  "dependencies": {
+    "r2d2rigo.dotnetzip-for-unity": "1.9.1"
+  },
+  "unity": "2018.1",
+  "keywords": [
+    "tools",
+    "editor",
+    "attributes",
+    "wildcard",
+    "gizmo",
+    "gizmos",
+    "icons",
+    "threading",
+    "tasks",
+    "coroutines"
+  ],
+  "author": {
+    "name": "Chris Marc Dailey (nitz)",
+    "url": "https://cmd.wtf/"
+  },
+  "license": "None",
+  "hideInEditor": false,
+  "type": "library"
+}
