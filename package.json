@@ -1,7 +1,7 @@
 {
   "name": "wtf.cmd.tools",
   "version": "0.0.1",
-  "displayName": "cmdwtf Unity Tools",
+  "displayName": "cmd.wtf Unity Tools",
   "description": "A small collection of tools that multiple projects make use of.",
   "category": "Libraries",
   "dependencies": {
