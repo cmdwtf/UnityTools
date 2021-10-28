@@ -29,14 +29,20 @@ public class EditorIcons : EditorWindow
     {
         using( new GUILayout.HorizontalScope())
         {
-            if (isWide) GUILayout.Space(10);
+            if (isWide)
+			{
+				GUILayout.Space(10);
+			}
 
-            search = EditorGUILayout.TextField(search, EditorStyles.toolbarSearchField);
+			search = EditorGUILayout.TextField(search, EditorStyles.toolbarSearchField);
             if ( GUILayout.Button(EditorGUIUtility.IconContent("winbtn_mac_close_h"), //SVN_DeletedLocal
                 EditorStyles.toolbarButton, 
                 GUILayout.Width(22))
-            ) search = "";
-        }
+            )
+			{
+				search = "";
+			}
+		}
     }
 
     bool isWide => Screen.width > 550;
@@ -47,8 +53,12 @@ public class EditorIcons : EditorWindow
     {
         GUIContent valid = null;
         Debug.unityLogger.logEnabled = false;
-        if (!string.IsNullOrEmpty(icon_name)) valid = EditorGUIUtility.IconContent(icon_name);
-        Debug.unityLogger.logEnabled = true;
+        if (!string.IsNullOrEmpty(icon_name))
+		{
+			valid = EditorGUIUtility.IconContent(icon_name);
+		}
+
+		Debug.unityLogger.logEnabled = true;
         return valid?.image == null ? null : valid;
     }
 
@@ -70,8 +80,11 @@ public class EditorIcons : EditorWindow
             //if (x.hideFlags != HideFlags.HideAndDontSave && x.hideFlags != skip_flag) skipped_flags++;  // skipped 27 icons
 
             GUIContent icoContent = GetIcon( x.name );
-            if ( icoContent == null ) continue; // skipped 14 icons 
-            //{ 
+            if ( icoContent == null )
+			{
+				continue; // skipped 14 icons 
+			}
+			//{ 
             //    skipped_nulls++; 
             //    continue; 
             //}
@@ -107,21 +120,30 @@ public class EditorIcons : EditorWindow
 
         InitIcons();
 
-        if (!isWide) SearchGUI();
+        if (!isWide)
+		{
+			SearchGUI();
+		}
 
-        using ( new GUILayout.HorizontalScope( EditorStyles.toolbar ) )
+		using ( new GUILayout.HorizontalScope( EditorStyles.toolbar ) )
         {
             GUILayout.Label("Select what icons to show", GUILayout.Width( 160 ));
             viewBigIcons = GUILayout.SelectionGrid(
               viewBigIcons ? 1 : 0, new string[] { "Small", "Big" }, 
               2 , EditorStyles.toolbarButton) == 1;
 
-            if (isWide) SearchGUI();
-        }
+            if (isWide)
+			{
+				SearchGUI();
+			}
+		}
 
-        if (isWide) GUILayout.Space(3);
+        if (isWide)
+		{
+			GUILayout.Space(3);
+		}
 
-        using (var scope = new GUILayout.ScrollViewScope(scroll))
+		using (var scope = new GUILayout.ScrollViewScope(scroll))
         {
             GUILayout.Space(10);
 
@@ -138,11 +160,17 @@ public class EditorIcons : EditorWindow
 
             List<GUIContent> iconList;
 
-            if( doSearch ) iconList = iconContentListAll.Where( x => x.tooltip.ToLower()
-                .Contains( search.ToLower() ) ).ToList();
-            else iconList = viewBigIcons ? iconContentListBig : iconContentListSmall;
+            if( doSearch )
+			{
+				iconList = iconContentListAll.Where( x => x.tooltip.ToLower()
+														   .Contains( search.ToLower() ) ).ToList();
+			}
+			else
+			{
+				iconList = viewBigIcons ? iconContentListBig : iconContentListSmall;
+			}
 
-            while ( index < iconList.Count )
+			while ( index < iconList.Count )
             {
                 using( new GUILayout.HorizontalScope() )
                 {
@@ -164,8 +192,11 @@ public class EditorIcons : EditorWindow
 
                         index ++ ;
 
-                        if( index == iconList.Count ) break;
-                    }
+                        if( index == iconList.Count )
+						{
+							break;
+						}
+					}
                 }
 
                 row ++ ;
@@ -175,9 +206,12 @@ public class EditorIcons : EditorWindow
         }
 
 
-        if (iconSelected == null) return;
-        
-        GUILayout.FlexibleSpace();
+        if (iconSelected == null)
+		{
+			return;
+		}
+
+		GUILayout.FlexibleSpace();
 
         using (new GUILayout.HorizontalScope( EditorStyles.helpBox, GUILayout.MaxHeight(viewBigIcons ? 140 : 120 ) ) )
         {
@@ -211,8 +245,10 @@ public class EditorIcons : EditorWindow
                 EditorGUILayout.TextField("EditorGUIUtility.IconContent(\"" + iconSelected.tooltip + "\")");
                 GUILayout.Space(5);
                 if(GUILayout.Button("Copy to clipboard",EditorStyles.miniButton))
-                    EditorGUIUtility.systemCopyBuffer = iconSelected.tooltip;
-            }
+				{
+					EditorGUIUtility.systemCopyBuffer = iconSelected.tooltip;
+				}
+			}
 
             GUILayout.Space(10);
 
@@ -249,9 +285,12 @@ public class EditorIcons : EditorWindow
 
     void InitIcons()
     {
-        if( iconContentListSmall != null ) return;
+        if( iconContentListSmall != null )
+		{
+			return;
+		}
 
-        iconButtonStyle = new GUIStyle( EditorStyles.miniButton );
+		iconButtonStyle = new GUIStyle( EditorStyles.miniButton );
         iconButtonStyle.margin = new RectOffset(0,0,0,0);
         iconButtonStyle.fixedHeight = 0;
 
@@ -281,9 +320,14 @@ public class EditorIcons : EditorWindow
             iconContentListAll.Add(ico);
             
             if ( !( ico.image.width <= 36 || ico.image.height <= 36 ) )
-                iconContentListBig.Add(ico);
-            else iconContentListSmall.Add(ico);
-        }
+			{
+				iconContentListBig.Add(ico);
+			}
+			else
+			{
+				iconContentListSmall.Add(ico);
+			}
+		}
     }
 
     // https://gist.github.com/MattRix/c1f7840ae2419d8eb2ec0695448d4321

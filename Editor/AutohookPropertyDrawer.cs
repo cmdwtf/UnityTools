@@ -3,47 +3,55 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
-namespace BrunoMikoski.Framework.AutoHook
+namespace cmdwtf.UnityTools.Editor
 {
     [CustomPropertyDrawer(typeof(AutohookAttribute))]
-    public sealed class AutohookPropertyDrawer : PropertyDrawer
+    internal sealed class AutohookPropertyDrawer : PropertyDrawer
     {
-        private Visibility visibility;
+        private Visibility _visibility;
 
-        private const BindingFlags BINDIN_FLAGS = BindingFlags.IgnoreCase
-                                                  | BindingFlags.Public
-                                                  | BindingFlags.Instance
-                                                  | BindingFlags.NonPublic;
+        private const BindingFlags BindingFlags = System.Reflection.BindingFlags.IgnoreCase
+                                                  | System.Reflection.BindingFlags.Public
+                                                  | System.Reflection.BindingFlags.Instance
+                                                  | System.Reflection.BindingFlags.NonPublic;
 
-        private AutohookAttribute AutoHookAttribute { get { return (AutohookAttribute)attribute; } }
+        private AutohookAttribute AutoHookAttribute => (AutohookAttribute)attribute;
 
-        public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
+		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
             Component component = FindAutohookTarget(property);
             if (component != null)
             {
                 if (property.objectReferenceValue == null)
-                    property.objectReferenceValue = component;
+				{
+					property.objectReferenceValue = component;
+				}
 
-                if (visibility == Visibility.Hidden)
-                    return;
-            }
+				if (_visibility == Visibility.Hidden)
+				{
+					return;
+				}
+			}
 
             bool guiEnabled = GUI.enabled;
-            if (visibility == Visibility.Disabled && component != null)
-                GUI.enabled = false;
-            EditorGUI.PropertyField(position, property, label);
+            if (_visibility == Visibility.Disabled && component != null)
+			{
+				GUI.enabled = false;
+			}
+
+			EditorGUI.PropertyField(position, property, label);
             GUI.enabled = guiEnabled;
         }
 
         private void UpdateVisibility()
-        {
-            visibility = AutoHookAttribute.Visibility;
-            if (visibility == Visibility.Default)
-            {
-                visibility = (Visibility)EditorPrefs.GetInt(AutoHookEditorSettings.AUTO_HOOK_VISIBILITY_KEY,
-                    0);
-            }
+		{
+            _visibility = AutoHookAttribute.Visibility;
+
+            if (_visibility == Visibility.Default)
+			{
+				var settings = AutohookSettings.GetOrCreateSettings();
+				_visibility = settings.defaultVisibility;
+			}
         }
 
         public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
@@ -51,22 +59,23 @@ namespace BrunoMikoski.Framework.AutoHook
             UpdateVisibility();
 
             Component component = FindAutohookTarget(property);
-            if (component != null && visibility == Visibility.Hidden)
-                return 0;
+            if (component != null && _visibility == Visibility.Hidden)
+			{
+				return 0;
+			}
 
-            return base.GetPropertyHeight(property, label);
+			return base.GetPropertyHeight(property, label);
         }
 
         private Component FindAutohookTarget(SerializedProperty property)
         {
             SerializedObject root = property.serializedObject;
 
-            if (root.targetObject is Component)
+            if (root.targetObject is Component component)
             {
                 Type type = GetTypeFromProperty(property);
 
-                Component component = (Component)root.targetObject;
-                switch (AutoHookAttribute.Context)
+				switch (AutoHookAttribute.Context)
                 {
                     case Context.Self:
                         return component.GetComponent(type);
@@ -92,7 +101,7 @@ namespace BrunoMikoski.Framework.AutoHook
             }
             else
             {
-                throw new Exception(root.targetObject + "is not a component");
+                throw new Exception($"{root.targetObject} is not a {nameof(Component)}.");
             }
 
             return null;
@@ -101,8 +110,8 @@ namespace BrunoMikoski.Framework.AutoHook
         private static Type GetTypeFromProperty(SerializedProperty property)
         {
             Type parentComponentType = property.serializedObject.targetObject.GetType();
-            FieldInfo fieldInfo = parentComponentType.GetField(property.propertyPath, BINDIN_FLAGS);
-            return fieldInfo.FieldType;
+            FieldInfo fieldInfo = parentComponentType.GetField(property.propertyPath, BindingFlags);
+            return fieldInfo?.FieldType;
         }
     }
 }

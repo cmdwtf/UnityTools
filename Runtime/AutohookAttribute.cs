@@ -1,52 +1,40 @@
 using UnityEngine;
 
-namespace BrunoMikoski.Framework.AutoHook
+namespace cmdwtf.UnityTools
 {
-    public enum Context
+	/// <summary>
+	/// An attribute that will cause the <see cref="Component"/> it's decorating
+	/// to automatically find a reference to hook up to.
+	/// The <see cref="Context"/> can be configured to look for components
+	/// outside of this <see cref="GameObject"/>.
+	/// The <see cref="Visibility"/> can be set to control how the field is
+	/// drawn in the inspector.
+	/// </summary>
+	public sealed class AutohookAttribute : PropertyAttribute
     {
-        Self = 0,
-        Parent = 1,
-        Child = 2,
-        Root = 3,
-        PrefabRoot = 4,
-    }
+		public Context Context { get; }
+		public Visibility Visibility { get; }
 
-    public enum Visibility
-    {
-        Default = 0,
-        Visible = 1,
-        Disabled = 2,
-        Hidden = 4
-    }
+		public AutohookAttribute()
+			: this(UnityTools.Context.Self, Visibility.Default)
+        { }
 
-    public sealed class AutohookAttribute : PropertyAttribute
-    {
-        private readonly Context context = Context.Self;
-        public Context Context { get { return context; } }
-        private readonly Visibility visibility = Visibility.Hidden;
-        public Visibility Visibility { get { return visibility; } }
-
-        public AutohookAttribute()
+        public AutohookAttribute(Context context)
+			: this()
         {
-            context = Context.Self;
-            visibility = Visibility.Default;
-        }
+            Context = context;
+		}
 
-        public AutohookAttribute(Context context) : this ()
+        public AutohookAttribute(Visibility visibility)
+			: this()
         {
-            this.context = context;
-
-        }
-
-        public AutohookAttribute(Visibility visibility): this ()
-        {
-            this.visibility = visibility;
+            Visibility = visibility;
         }
 
         public AutohookAttribute(Context context, Visibility visibility)
         {
-            this.context = context;
-            this.visibility = visibility;
+            Context = context;
+            Visibility = visibility;
         }
     }
 }
