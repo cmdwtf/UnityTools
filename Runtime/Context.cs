@@ -30,5 +30,10 @@ namespace cmdwtf.UnityTools
 		/// This uses <c>PrefabUtility.GetOutermostPrefabInstanceRoot</c> to get the component from.
 		/// </summary>
 		PrefabRoot = 4,
+		/// <summary>
+		/// The <see cref="Component"/> should come from any <see cref="GameObject"/> in the scene.
+		/// This uses <see cref="Object.FindObjectOfType(System.Type)"/> to find the component.
+		/// </summary>
+		Anywhere = 5,
 	}
 }

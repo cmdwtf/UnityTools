@@ -3,6 +3,8 @@ using System.Reflection;
 using UnityEditor;
 using UnityEngine;
 
+using Object = UnityEngine.Object;
+
 namespace cmdwtf.UnityTools.Editor
 {
     [CustomPropertyDrawer(typeof(AutohookAttribute))]
@@ -90,14 +92,12 @@ namespace cmdwtf.UnityTools.Editor
                         return options.Length > 0 ? options[0] : null;
                     }
                     case Context.Root:
-                    {
                         return component.transform.root.GetComponent(type);
-                    }
                     case Context.PrefabRoot:
-                    {
                         return PrefabUtility.GetOutermostPrefabInstanceRoot(component.transform).GetComponent(type);
-                    }
-                }
+					case Context.Anywhere:
+						return Object.FindObjectOfType(type) as Component;
+				}
             }
             else
             {

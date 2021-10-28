@@ -15,8 +15,11 @@ namespace cmdwtf.UnityTools.Editor
 			{
 				guiHandler = (searchContext) =>
 				{
-					var settings = AutohookSettings.GetSerializedSettings();
-					EditorGUILayout.PropertyField(settings.FindProperty(nameof(AutohookSettings.defaultVisibility)),     new GUIContent("Default Visibility"));
+					var settings = AutohookSettings.GetOrCreateSettings();
+					var serialized = settings.GetSerialized();
+					EditorGUILayout.PropertyField(serialized.FindProperty(nameof(AutohookSettings.defaultVisibility)), new GUIContent("Default Visibility"));
+
+					settings.Validate();
 				},
 
 				// Populate the search keywords to enable smart search filtering and label highlighting:

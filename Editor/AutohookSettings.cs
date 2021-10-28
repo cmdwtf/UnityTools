@@ -1,12 +1,15 @@
 using UnityEditor;
 
 using UnityEngine;
+using UnityEngine.UIElements;
 
 namespace cmdwtf.UnityTools.Editor
 {
 	internal class AutohookSettings : ScriptableObject
 	{
 		private const string AutohookSettingsPath = "Assets/Editor/AutohookSettings.asset";
+
+		public const Visibility DefaultDefaultVisibility = Visibility.Visible;
 
 		[SerializeField]
 		internal Visibility defaultVisibility;
@@ -21,14 +24,24 @@ namespace cmdwtf.UnityTools.Editor
 			}
 
 			settings = CreateInstance<AutohookSettings>();
-			settings.defaultVisibility = Visibility.Visible;
+			settings.Validate();
 			AssetDatabase.CreateAsset(settings, AutohookSettingsPath);
 			AssetDatabase.SaveAssets();
 
 			return settings;
 		}
 
-		internal static SerializedObject GetSerializedSettings()
+		internal SerializedObject GetSerialized() => new SerializedObject(this);
+
+		internal static SerializedObject GetOrCreateSerialized()
 			=> new SerializedObject(GetOrCreateSettings());
+
+		public void Validate()
+		{
+			if (defaultVisibility == Visibility.Default)
+			{
+				defaultVisibility = DefaultDefaultVisibility;
+			}
+		}
 	}
 }
