@@ -14,7 +14,7 @@ namespace cmdwtf.UnityTools
 				{
 					return true;
 				}
-				
+
 				test = test.parent;
 			}
 
@@ -23,10 +23,10 @@ namespace cmdwtf.UnityTools
 
 		public static bool IsChildOf(this Transform target, GameObject potentialParent)
 			=> target.IsChildOf(potentialParent.transform);
-		
+
 		public static bool IsChildOf(this Transform target, Component potentialParent)
 			=> target.IsChildOf(potentialParent.transform);
-		
+
 		public static void SetPositionAs(this Transform t, GameObject go)
 		{
 			Vector3 position = go.transform.position;
@@ -37,7 +37,7 @@ namespace cmdwtf.UnityTools
 		{
 			t.position = new Vector3(pos.x, pos.y, pos.z);
 		}
-		
+
 		public static void MoveBy(this Transform t, float x, float y, float z)
 		{
 			Vector3 position = t.position;
@@ -54,19 +54,52 @@ namespace cmdwtf.UnityTools
 		{
 			t.eulerAngles = new Vector3(x, y, z);
 		}
-		
+
 		public static void ScaleTo(this Transform t, float x, float y, float z)
 		{
 			t.localScale = new Vector3(x, y, z);
 		}
 
 		public static float DistanceTo(this Transform t, Transform other) => t.DistanceTo(other.position);
-		
+
 		public static float DistanceTo(this Transform t, GameObject other) => t.DistanceTo(other.transform.position);
-		
+
 		public static float DistanceTo(this Transform t, Component other) => t.DistanceTo(other.transform.position);
 
 		public static float DistanceTo(this Transform t, Vector3 point) => (t.position - point).magnitude;
 
+		public static float DistanceFrom(this Transform t, Transform other) => t.DistanceFrom(other.position);
+
+		public static float DistanceFrom(this Transform t, GameObject other) => t.DistanceFrom(other.transform.position);
+
+		public static float DistanceFrom(this Transform t, Component other) => t.DistanceFrom(other.transform.position);
+
+		public static float DistanceFrom(this Transform t, Vector3 point) => (point - t.position).magnitude;
+
+		public static float FlatAngleTo(this Transform t, Transform other) => t.FlatAngleTo(other.position);
+
+		public static float FlatAngleTo(this Transform t, GameObject other) => t.FlatAngleTo(other.transform.position);
+
+		public static float FlatAngleTo(this Transform t, Component other) => t.FlatAngleTo(other.transform.position);
+
+		public static float FlatAngleTo(this Transform t, Vector3 other)
+			=> FlatAngle(other - t.transform.position);
+
+		public static float FlatAngleFrom(this Transform t, Transform other) => t.FlatAngleFrom(other.position);
+
+		public static float FlatAngleFrom(this Transform t, GameObject other) => t.FlatAngleFrom(other.transform.position);
+
+		public static float FlatAngleFrom(this Transform t, Component other) => t.FlatAngleFrom(other.transform.position);
+
+		public static float FlatAngleFrom(this Transform t, Vector3 other)
+			=> FlatAngle(t.transform.position - other);
+
+		private static float FlatAngle(Vector3 p)
+		{
+			Vector2 flattened = new Vector2(p.x, p.z);
+			float angle = Vector2.SignedAngle(flattened, Vector2.up);
+			angle += 180.0f;
+			return angle % 360.0f;
+		}
 	}
 }

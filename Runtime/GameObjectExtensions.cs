@@ -68,15 +68,52 @@ namespace cmdwtf.UnityTools
 
 		public static float DistanceTo(this GameObject go, GameObject other)
 			=> go.transform.DistanceTo(other.transform.position);
-		
+
 		public static float DistanceTo(this GameObject go, Component other)
 			=> go.transform.DistanceTo(other.transform.position);
-		
+
 		public static float DistanceTo(this GameObject go, Vector3 point)
 			=> go.transform.DistanceTo(point);
+
+		public static float DistanceFrom(this GameObject go, Transform other)
+			=> go.transform.DistanceFrom(other.position);
+
+		public static float DistanceFrom(this GameObject go, GameObject other)
+			=> go.transform.DistanceFrom(other.transform.position);
 		
+		public static float DistanceFrom(this GameObject go, Component other)
+			=> go.transform.DistanceFrom(other.transform.position);
+
+		public static float DistanceFrom(this GameObject go, Vector3 point)
+			=> go.transform.DistanceFrom(point);
+
+
+		public static float FlatAngleTo(this GameObject go, Transform other)
+			=> go.transform.FlatAngleTo(other.position);
+
+		public static float FlatAngleTo(this GameObject go, GameObject other)
+			=> go.transform.FlatAngleTo(other.transform.position);
+		
+		public static float FlatAngleTo(this GameObject go, Component other)
+			=> go.transform.FlatAngleTo(other.transform.position);
+
+		public static float FlatAngleTo(this GameObject go, Vector3 point)
+			=> go.transform.FlatAngleTo(point);
+
+		public static float FlatAngleFrom(this GameObject go, Transform other)
+			=> go.transform.FlatAngleFrom(other.position);
+
+		public static float FlatAngleFrom(this GameObject go, GameObject other)
+			=> go.transform.FlatAngleFrom(other.transform.position);
+
+		public static float FlatAngleFrom(this GameObject go, Component other)
+			=> go.transform.FlatAngleFrom(other.transform.position);
+
+		public static float FlatAngleFrom(this GameObject go, Vector3 point)
+			=> go.transform.FlatAngleFrom(point);
+
 		#region Cube Bounds of Object
-		
+
 		public static Vector3 GetLeft(this GameObject go)
 			=> (go.transform.position - go.transform.right * go.transform.localScale.x/2);
 
