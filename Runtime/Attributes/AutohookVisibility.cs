@@ -1,12 +1,12 @@
 using System;
 
-namespace cmdwtf.UnityTools
+namespace cmdwtf.UnityTools.Attributes
 {
 	/// <summary>
-	/// The visibility of the Autohooked property in the editor.
+	/// The visibility of the <see cref="AutohookAttribute"/>ed property in the editor.
 	/// </summary>
 	[Flags]
-	public enum Visibility
+	public enum AutohookVisibility
 	{
 		/// <summary>
 		/// The Default visibility, adjustable via autohook settings.

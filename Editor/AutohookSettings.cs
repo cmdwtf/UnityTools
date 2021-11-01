@@ -1,3 +1,5 @@
+using cmdwtf.UnityTools.Attributes;
+
 using UnityEditor;
 
 using UnityEngine;
@@ -9,10 +11,10 @@ namespace cmdwtf.UnityTools.Editor
 	{
 		private const string AutohookSettingsPath = "Assets/Editor/AutohookSettings.asset";
 
-		public const Visibility DefaultDefaultVisibility = Visibility.Visible;
+		public const AutohookVisibility DefaultDefaultVisibility = AutohookVisibility.Visible;
 
 		[SerializeField]
-		internal Visibility defaultVisibility;
+		internal AutohookVisibility defaultVisibility;
 
 		internal static AutohookSettings GetOrCreateSettings()
 		{
@@ -38,7 +40,7 @@ namespace cmdwtf.UnityTools.Editor
 
 		public void Validate()
 		{
-			if (defaultVisibility == Visibility.Default)
+			if (defaultVisibility == AutohookVisibility.Default)
 			{
 				defaultVisibility = DefaultDefaultVisibility;
 			}

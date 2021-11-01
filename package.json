@@ -1,6 +1,6 @@
 {
   "name": "wtf.cmd.tools",
-  "version": "0.0.2",
+  "version": "0.0.3",
   "displayName": "cmd.wtf Unity Tools",
   "description": "A small collection of tools that multiple projects make use of.",
   "category": "Libraries",
@@ -18,7 +18,10 @@
     "icons",
     "threading",
     "tasks",
-    "coroutines"
+    "coroutines",
+	"autohook",
+	"getcomponent",
+	"findcomponent"
   ],
   "author": {
     "name": "Chris Marc Dailey (nitz)",

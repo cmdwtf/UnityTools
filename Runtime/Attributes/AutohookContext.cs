@@ -1,12 +1,12 @@
 using UnityEngine;
 
-namespace cmdwtf.UnityTools
+namespace cmdwtf.UnityTools.Attributes
 {
 	/// <summary>
 	/// Context with which <see cref="AutohookAttribute"/> should
 	/// look to find the component from.
 	/// </summary>
-	public enum Context
+	public enum AutohookContext
 	{
 		/// <summary>
 		/// The <see cref="Component"/> should come from the current <see cref="GameObject"/>.
@@ -34,6 +34,16 @@ namespace cmdwtf.UnityTools
 		/// The <see cref="Component"/> should come from any <see cref="GameObject"/> in the scene.
 		/// This uses <see cref="Object.FindObjectOfType(System.Type)"/> to find the component.
 		/// </summary>
-		Anywhere = 5,
+		Scene = 5,
+		/// <summary>
+		/// The <see cref="Component"/> should come from a specific <see cref="GameObject"/> in the scene.
+		/// This uses <see cref="GameObject.Find"/> to find the component.
+		/// </summary>
+		Target = 6,
+		/// <summary>
+		/// The <see cref="Component"/> should come from a <see cref="GameObject"/> with specific <see cref="GameObject.tag"/> in the scene.
+		/// This uses <see cref="GameObject.FindWithTag"/> to find the component.
+		/// </summary>
+		Tagged = 7,
 	}
 }

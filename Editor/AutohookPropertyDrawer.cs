@@ -1,5 +1,8 @@
 using System;
 using System.Reflection;
+
+using cmdwtf.UnityTools.Attributes;
+
 using UnityEditor;
 using UnityEngine;
 
@@ -10,14 +13,9 @@ namespace cmdwtf.UnityTools.Editor
     [CustomPropertyDrawer(typeof(AutohookAttribute))]
     internal sealed class AutohookPropertyDrawer : PropertyDrawer
     {
-        private Visibility _visibility;
+        private AutohookVisibility _autohookVisibility;
 
-        private const BindingFlags BindingFlags = System.Reflection.BindingFlags.IgnoreCase
-                                                  | System.Reflection.BindingFlags.Public
-                                                  | System.Reflection.BindingFlags.Instance
-                                                  | System.Reflection.BindingFlags.NonPublic;
-
-        private AutohookAttribute AutoHookAttribute => (AutohookAttribute)attribute;
+        private AutohookAttribute Attribute => (AutohookAttribute)attribute;
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
@@ -29,14 +27,14 @@ namespace cmdwtf.UnityTools.Editor
 					property.objectReferenceValue = component;
 				}
 
-				if (_visibility == Visibility.Hidden)
+				if (_autohookVisibility == AutohookVisibility.Hidden)
 				{
 					return;
 				}
 			}
 
             bool guiEnabled = GUI.enabled;
-            if (_visibility == Visibility.Disabled && component != null)
+            if (_autohookVisibility == AutohookVisibility.Disabled && component != null)
 			{
 				GUI.enabled = false;
 			}
@@ -47,12 +45,12 @@ namespace cmdwtf.UnityTools.Editor
 
         private void UpdateVisibility()
 		{
-            _visibility = AutoHookAttribute.Visibility;
+            _autohookVisibility = Attribute.Visibility;
 
-            if (_visibility == Visibility.Default)
+            if (_autohookVisibility == AutohookVisibility.Default)
 			{
 				var settings = AutohookSettings.GetOrCreateSettings();
-				_visibility = settings.defaultVisibility;
+				_autohookVisibility = settings.defaultVisibility;
 			}
         }
 
@@ -61,7 +59,7 @@ namespace cmdwtf.UnityTools.Editor
             UpdateVisibility();
 
             Component component = FindAutohookTarget(property);
-            if (component != null && _visibility == Visibility.Hidden)
+            if (component != null && _autohookVisibility == AutohookVisibility.Hidden)
 			{
 				return 0;
 			}
@@ -70,48 +68,8 @@ namespace cmdwtf.UnityTools.Editor
         }
 
         private Component FindAutohookTarget(SerializedProperty property)
-        {
-            SerializedObject root = property.serializedObject;
-
-            if (root.targetObject is Component component)
-            {
-                Type type = GetTypeFromProperty(property);
-
-				switch (AutoHookAttribute.Context)
-                {
-                    case Context.Self:
-                        return component.GetComponent(type);
-                    case Context.Child:
-                    {
-                        Component[] options = component.GetComponentsInChildren(type, true);
-                        return options.Length > 0 ? options[0] : null;
-                    }
-                    case Context.Parent:
-                    {
-                        Component[] options = component.GetComponentsInParent(type, true);
-                        return options.Length > 0 ? options[0] : null;
-                    }
-                    case Context.Root:
-                        return component.transform.root.GetComponent(type);
-                    case Context.PrefabRoot:
-                        return PrefabUtility.GetOutermostPrefabInstanceRoot(component.transform).GetComponent(type);
-					case Context.Anywhere:
-						return Object.FindObjectOfType(type) as Component;
-				}
-            }
-            else
-            {
-                throw new Exception($"{root.targetObject} is not a {nameof(Component)}.");
-            }
-
-            return null;
-        }
-
-        private static Type GetTypeFromProperty(SerializedProperty property)
-        {
-            Type parentComponentType = property.serializedObject.targetObject.GetType();
-            FieldInfo fieldInfo = parentComponentType.GetField(property.propertyPath, BindingFlags);
-            return fieldInfo?.FieldType;
-        }
-    }
+			=> Attribute.Temporality != AutohookTemporality.Editor
+				   ? null
+				   : Attribute.GetComponentFromContext(property);
+	}
 }
