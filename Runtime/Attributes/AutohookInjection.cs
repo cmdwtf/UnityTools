@@ -14,13 +14,12 @@ namespace cmdwtf.UnityTools.Attributes
 		public static Action<AutohookAttribute, FieldInfo, MonoBehaviour> SingleObjectClassifier;
 	    public static Action<AutohookAttribute, FieldInfo, (MonoBehaviour, MonoBehaviour[])> MultipleObjectClassifier;
 
-
 	    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
 		private static void InjectScriptReferences()
 	    {
 	        SingleObjectClassifier += (attr, field, behavior) =>
 			{
-				object value = attr.GetComponentFromContext(field.FieldType);
+				object value = attr.GetComponentFromContext(behavior, field.FieldType);
 				if (value != null)
 				{
 					field.SetValue(behavior, value);

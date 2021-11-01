@@ -87,6 +87,35 @@ namespace cmdwtf.UnityTools.Attributes
 			return null;
 		}
 
+		public Component GetComponentFromContext(MonoBehaviour behavior, Type type)
+		{
+			switch (Context)
+			{
+				case AutohookContext.Self:
+					return behavior.GetComponent(type);
+				case AutohookContext.Child:
+				{
+					Component[] options = behavior.GetComponentsInChildren(type, true);
+					return options.Length > 0 ? options[0] : null;
+				}
+				case AutohookContext.Parent:
+				{
+					Component[] options = behavior.GetComponentsInParent(type, true);
+					return options.Length > 0 ? options[0] : null;
+				}
+				case AutohookContext.Root:
+					return behavior.transform.root.GetComponent(type);
+#if UNITY_EDITOR
+				case AutohookContext.PrefabRoot:
+					return PrefabUtility.GetOutermostPrefabInstanceRoot(behavior.transform).GetComponent(type);
+#endif // UNITY_EDITOR
+			}
+
+			// try the stateless contexts, or throw an exception.
+			return GetComponentFromContext(type)
+				   ?? throw new Exception($"Unsupported {nameof(Context)}: {Context}");
+		}
+
 #if UNITY_EDITOR
 
 		public Component GetComponentFromContext(SerializedProperty property)
