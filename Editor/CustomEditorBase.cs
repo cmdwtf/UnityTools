@@ -10,6 +10,8 @@ namespace cmdwtf.UnityTools.Editor
 {
 	public abstract class CustomEditorBase : UnityEditor.Editor
 	{
+		protected List<string> _ignoredPropertyNames = new List<string>{ "m_Script" };
+		
 		private List<IEnumerator> _runningCoroutines = new List<IEnumerator>();
 		private string ObjectName => target == null ? string.Empty : target.name;
 
@@ -26,18 +28,18 @@ namespace cmdwtf.UnityTools.Editor
 			}
 
 			int index = _runningCoroutines.Count - 1;
-			
+
 			Debug.Log($"{ObjectName}: Executing Coroutine {index}");
-         
+
 			bool coroutineFinished = !_runningCoroutines[index].MoveNext();
- 
+
 			if (coroutineFinished)
 			{
 				Debug.Log($"{ObjectName}: Finished Coroutine {index}");
 				_runningCoroutines.RemoveAt(index);
 			}
 		}
-		
+
 		protected void DoChildEditor(Component child, bool recurse = true)
 		{
 			if (child == null)
@@ -51,8 +53,9 @@ namespace cmdwtf.UnityTools.Editor
 
 			while (prop.NextVisible(recurse))
 			{
-				if (prop.name != "m_Script") // && prop.name.StartsWith("m_"))
+				if (_ignoredPropertyNames.Contains(prop.name) == false) // && prop.name.StartsWith("m_"))
 				{
+					Debug.Log(prop.name);
 					EditorGUILayout.PropertyField(prop);
 				}
 			}
@@ -61,7 +64,7 @@ namespace cmdwtf.UnityTools.Editor
 
 			serialized.ApplyModifiedProperties();
 		}
-		
+
 		protected void StartCoroutine(IEnumerator cr)
 		{
 			_runningCoroutines.Add(cr);
