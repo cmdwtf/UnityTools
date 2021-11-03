@@ -53,9 +53,8 @@ namespace cmdwtf.UnityTools.Editor
 
 			while (prop.NextVisible(recurse))
 			{
-				if (_ignoredPropertyNames.Contains(prop.name) == false) // && prop.name.StartsWith("m_"))
+				if (_ignoredPropertyNames.Contains(prop.name) == false)
 				{
-					Debug.Log(prop.name);
 					EditorGUILayout.PropertyField(prop);
 				}
 			}

@@ -12,27 +12,27 @@ namespace cmdwtf.UnityTools.Attributes
 	public static class AutohookInjection
 	{
 		public static Action<AutohookAttribute, FieldInfo, MonoBehaviour> SingleObjectClassifier;
-	    public static Action<AutohookAttribute, FieldInfo, (MonoBehaviour, MonoBehaviour[])> MultipleObjectClassifier;
+		public static Action<AutohookAttribute, FieldInfo, (MonoBehaviour, MonoBehaviour[])> MultipleObjectClassifier;
 
-	    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.BeforeSceneLoad)]
 		private static void InjectScriptReferences()
-	    {
-	        SingleObjectClassifier += (attr, field, behavior) =>
+		{
+			SingleObjectClassifier += (attr, field, behavior) =>
 			{
 				object value = attr.GetComponentFromContext(behavior, field.FieldType);
 				if (value != null)
 				{
 					field.SetValue(behavior, value);
 				}
-	        };
-	        Inject();
-	    }
+			};
+			Inject();
+		}
 
-	    [RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
+		[RuntimeInitializeOnLoadMethod(RuntimeInitializeLoadType.AfterSceneLoad)]
 		private static void InjectGameObjectReferences()
-	    {
-	        MultipleObjectClassifier += (attr, field, behaviorPair) =>
-	        {
+		{
+			MultipleObjectClassifier += (attr, field, behaviorPair) =>
+			{
 				if (attr.Context != AutohookContext.Target ||
 					attr.Context != AutohookContext.Tagged)
 				{
@@ -40,22 +40,22 @@ namespace cmdwtf.UnityTools.Attributes
 				}
 
 				GameObject target = attr.GetTargetGameObject();
-	            field.SetValue(behaviorPair.Item1,
+				field.SetValue(behaviorPair.Item1,
 							   target.GetComponent(
 								   field.GetValue(behaviorPair.Item1).GetType()
 								   )
 							   );
-	        };
-	        Inject();
-	    }
+			};
+			Inject();
+		}
 
-	    private static void Inject()
-	    {
-	        MonoBehaviour[] behaviors = Object.FindObjectsOfType<MonoBehaviour>();
-	        foreach (MonoBehaviour behavior in behaviors)
-	        {
-	            Type behaviorType = behavior.GetType();
-	            FieldInfo[] behaviorFields = behaviorType.GetFields(AutohookAttribute.BindingFlags);
+		private static void Inject()
+		{
+			MonoBehaviour[] behaviors = Object.FindObjectsOfType<MonoBehaviour>();
+			foreach (MonoBehaviour behavior in behaviors)
+			{
+				Type behaviorType = behavior.GetType();
+				FieldInfo[] behaviorFields = behaviorType.GetFields(AutohookAttribute.BindingFlags);
 				foreach (FieldInfo field in behaviorFields)
 				{
 					if (!field.IsDefined(typeof(AutohookAttribute), false))
@@ -73,7 +73,7 @@ namespace cmdwtf.UnityTools.Attributes
 					SingleObjectClassifier?.Invoke(attr, field, behavior);
 					MultipleObjectClassifier?.Invoke(attr, field, (behavior, behaviors));
 				}
-	        }
-	    }
+			}
+		}
 	}
 }
