@@ -8,6 +8,8 @@ namespace cmdwtf.UnityTools.Editor
 {
 	public static class EditorGUILayoutEx
 	{
+		private static Rect? _lastRect = null;
+		
 		/// <inheritdoc cref="EditorGUI.DropdownButton(UnityEngine.Rect,UnityEngine.GUIContent,UnityEngine.FocusType)"/>
 		public static bool DropdownButtonLabeled(string label,
 												 string dropdownContent,
@@ -71,10 +73,17 @@ namespace cmdwtf.UnityTools.Editor
 				EditorGUI.LabelField(labelRect, label);
 			}
 
+			// store the last rect for the user to know where the dropdown button was drawn.
+			_lastRect = dropdownRect;
+
 			// draw the dropdown, and return the user clicked value from it.
 			return dropdownStyle != null
 					   ? EditorGUI.DropdownButton(dropdownRect, dropdownContent, dropdownFocusType, dropdownStyle)
 					   : EditorGUI.DropdownButton(dropdownRect, dropdownContent, dropdownFocusType);
 		}
+
+		/// <inheritdoc cref="GUILayoutUtility.GetLastRect"/>
+		public static Rect GetLastRect()
+			=> _lastRect ?? Rect.zero;
 	}
 }
