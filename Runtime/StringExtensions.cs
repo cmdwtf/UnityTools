@@ -47,5 +47,8 @@ namespace cmdwtf.UnityTools
 
 			return result;
 		}
+
+		public static UnityEngine.GUIContent ToGUIContent(this string text)
+			=> new UnityEngine.GUIContent(text);
 	}
 }
