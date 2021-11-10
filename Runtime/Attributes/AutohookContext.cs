@@ -10,14 +10,17 @@ namespace cmdwtf.UnityTools.Attributes
 	{
 		/// <summary>
 		/// The <see cref="Component"/> should come from the current <see cref="GameObject"/>.
+		/// This uses <see cref="GameObject.GetComponent{T}"/> to find the component.
 		/// </summary>
 		Self = 0,
 		/// <summary>
 		/// The <see cref="Component"/> should come from a parent <see cref="GameObject"/>.
+		/// This uses <see cref="GameObject.GetComponentInParent{T}()"/> to find the component.
 		/// </summary>
 		Parent = 1,
 		/// <summary>
-		/// The <see cref="Component"/> should come from a child <see cref="GameObject"/>.
+		/// The <see cref="Component"/> should come from a this or a child <see cref="GameObject"/>.
+		/// This uses <see cref="GameObject.GetComponentInChildren{T}()"/> to find the component.
 		/// </summary>
 		Child = 2,
 		/// <summary>
@@ -25,10 +28,12 @@ namespace cmdwtf.UnityTools.Attributes
 		/// This uses <see cref="Transform.root"/> to determine the root object.
 		/// </summary>
 		Root = 3,
+#if UNITY_EDITOR
 		/// <summary>
 		/// The <see cref="Component"/> should come from the root <see cref="GameObject"/> in the current prefab.
-		/// This uses <c>PrefabUtility.GetOutermostPrefabInstanceRoot</c> to get the component from.
+		/// This uses <see cref="PrefabUtility.GetOutermostPrefabInstanceRoot"/> to get the component from.
 		/// </summary>
+#endif // UNITY_EDITOR
 		PrefabRoot = 4,
 		/// <summary>
 		/// The <see cref="Component"/> should come from any <see cref="GameObject"/> in the scene.
