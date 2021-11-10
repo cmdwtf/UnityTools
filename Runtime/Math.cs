@@ -82,6 +82,14 @@ namespace cmdwtf.UnityTools
 			return s;
 		}
 		
+		public static Vector2 SmoothDamp(Vector2 cur, Vector2 tgt, ref Vector2 velocity, float time)
+		{
+			Vector2 ret = Vector2.zero;
+			ret.x = Mathf.SmoothDamp(cur.x, tgt.x, ref velocity.x, time);
+			ret.y = Mathf.SmoothDamp(cur.y, tgt.y, ref velocity.y, time);
+			return ret;
+		}
+		
 		public static Vector3 SmoothDamp(Vector3 cur, Vector3 tgt, ref Vector3 velocity, float time)
 		{
 			Vector3 ret = Vector3.zero;
@@ -90,6 +98,24 @@ namespace cmdwtf.UnityTools
 			ret.z = Mathf.SmoothDamp(cur.z, tgt.z, ref velocity.z, time);
 			return ret;
 		}
+		
+		public static Vector4 SmoothDamp(Vector4 cur, Vector4 tgt, ref Vector4 velocity, float time)
+		{
+			Vector4 ret = Vector4.zero;
+			ret.x = Mathf.SmoothDamp(cur.x, tgt.x, ref velocity.x, time);
+			ret.y = Mathf.SmoothDamp(cur.y, tgt.y, ref velocity.y, time);
+			ret.z = Mathf.SmoothDamp(cur.z, tgt.z, ref velocity.z, time);
+			ret.w = Mathf.SmoothDamp(cur.w, tgt.w, ref velocity.w, time);
+			return ret;
+		}
 
+		public static int ClosestMultiple(int x, int y)
+			=> (int)Mathf.Round((float)x/y) * y;
+
+		public static float ClosestMultiple(float x, float y)
+			=> Mathf.Round(x/y) * y;
+
+		public static double ClosestMultiple(double x, double y)
+			=> System.Math.Round(x/y) * y;
 	}
 }

@@ -21,5 +21,14 @@ namespace cmdwtf.UnityTools
 
 		public static double MakeNegitive(this double f)
 			=> Math.MakeNegative(f);
+
+		public static int ClosestMultipleOf(this int x, int y)
+			=> Math.ClosestMultiple(x, y);
+
+		public static float ClosestMultipleOf(float x, float y)
+			=> Math.ClosestMultiple(x, y);
+
+		public static double ClosestMultipleOf(double x, double y)
+			=> Math.ClosestMultiple(x, y);
 	}
 }
