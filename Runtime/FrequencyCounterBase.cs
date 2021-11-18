@@ -3,20 +3,23 @@ namespace cmdwtf.UnityTools
 	public abstract class FrequencyCounterBase : IFrequencyCounter
 	{
 		protected readonly ITimeProvider Time;
-		public virtual int Samples { get; }
-		public virtual float Frequency { get; }
+		public virtual int Samples { get; protected set; }
+		public virtual float Frequency { get; protected set; }
 
 		public virtual float Period
 		{
 			get => Time.PeriodF;
-			set => Time.PeriodF = value;
+			set
+			{
+				Time.PeriodF = value;
+				Reset();
+			}
 		}
 
-		public virtual float MeasuredSeconds { get; }
+		public virtual float MeasuredSeconds { get; protected set; }
 
 		public FrequencyCounterBase(ITimeProvider timeProvider = null, float period = float.NaN)
 		{
-
 			if (float.IsNaN(period) || period < 0)
 			{
 				period = 1f;

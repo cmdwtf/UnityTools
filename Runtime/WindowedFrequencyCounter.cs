@@ -11,9 +11,7 @@ namespace cmdwtf.UnityTools
 		private readonly Queue<float> _samples = new Queue<float>();
 		private float _startTime;
 
-		public int Samples => _samples.Count;
-		public float Frequency { get; private set; }
-		public float MeasuredSeconds { get; private set; }
+		public override int Samples => _samples.Count;
 
 		public WindowedFrequencyCounter(float period)
 			: base(null, period)

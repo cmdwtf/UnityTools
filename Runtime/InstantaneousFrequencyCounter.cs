@@ -2,21 +2,6 @@ namespace cmdwtf.UnityTools
 {
 	public class InstantaneousFrequencyCounter : FrequencyCounterBase
 	{
-		private float _period;
-		public float Period
-		{
-			get => _period;
-			set
-			{
-				_period = value;
-				Reset();
-			}
-		}
-
-		public int Samples { get; private set; }
-		public float Frequency { get; private set; }
-		public float MeasuredSeconds { get; private set; }
-
 		private float _elapsed;
 		private float _nextUpdate;
 		private float _lastUpdate;
