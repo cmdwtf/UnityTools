@@ -1,3 +1,5 @@
+using System.IO;
+
 using cmdwtf.UnityTools.Attributes;
 
 using UnityEditor;
@@ -18,6 +20,13 @@ namespace cmdwtf.UnityTools.Editor
 
 		internal static AutohookSettings GetOrCreateSettings()
 		{
+			string settingsDir = Path.GetDirectoryName(AutohookSettingsPath);
+			if (Directory.Exists(settingsDir) == false)
+			{
+				Debug.Log($"Creating {nameof(AutohookSettings)} directory: {settingsDir}");
+				Directory.CreateDirectory(AutohookSettingsPath);
+			}
+
 			var settings = AssetDatabase.LoadAssetAtPath<AutohookSettings>(AutohookSettingsPath);
 
 			if (settings != null)
@@ -26,7 +35,8 @@ namespace cmdwtf.UnityTools.Editor
 			}
 
 			settings = CreateInstance<AutohookSettings>();
-			settings.Validate();
+
+			// create the asset
 			AssetDatabase.CreateAsset(settings, AutohookSettingsPath);
 			AssetDatabase.SaveAssets();
 
@@ -45,5 +55,7 @@ namespace cmdwtf.UnityTools.Editor
 				defaultVisibility = DefaultDefaultVisibility;
 			}
 		}
+
+		public void MarkDirty() => EditorUtility.SetDirty(this);
 	}
 }

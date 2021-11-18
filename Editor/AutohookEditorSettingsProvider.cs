@@ -1,5 +1,7 @@
 using System.Collections.Generic;
 
+using cmdwtf.UnityTools.Attributes;
+
 using UnityEditor;
 
 using UnityEngine;
@@ -16,10 +18,16 @@ namespace cmdwtf.UnityTools.Editor
 				guiHandler = (searchContext) =>
 				{
 					var settings = AutohookSettings.GetOrCreateSettings();
-					var serialized = settings.GetSerialized();
-					EditorGUILayout.PropertyField(serialized.FindProperty(nameof(AutohookSettings.defaultVisibility)), new GUIContent("Default Visibility"));
 
-					settings.Validate();
+					EditorGUI.BeginChangeCheck();
+					settings.defaultVisibility =
+						(AutohookVisibility)EditorGUILayout.EnumPopup("Default Visibility", settings.defaultVisibility);
+
+					if (EditorGUI.EndChangeCheck())
+					{
+						settings.Validate();
+						settings.MarkDirty();
+					}
 				},
 
 				// Populate the search keywords to enable smart search filtering and label highlighting:
