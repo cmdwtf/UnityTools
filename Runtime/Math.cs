@@ -4,17 +4,21 @@ namespace cmdwtf.UnityTools
 {
 	public static class Math
 	{
-		public static float MakePositive(float f)
-			=> f < 0 ? f * -1 : f;
+		public static sbyte MakePositive(sbyte b) => (sbyte)(b < 0 ? b * -1 : b);
+		public static short MakePositive(short s) => (short)(s < 0 ? s * -1 : s);
+		public static int MakePositive(int i) => i < 0 ? i * -1 : i;
+		public static long MakePositive(long l) => l < 0 ? l * -1 : l;
+		public static float MakePositive(float f) => f < 0 ? f * -1 : f;
+		public static double MakePositive(double d) => d < 0 ? d * -1 : d;
+		public static decimal MakePositive(decimal m) => m < 0 ? m * -1 : m;
 
-		public static float MakeNegative(float f)
-			=> f > 0 ? f * -1 : f;
-
-		public static double MakePositive(double f)
-			=> f < 0 ? f * -1 : f;
-
-		public static double MakeNegative(double f)
-			=> f > 0 ? f * -1 : f;
+		public static sbyte MakeNegative(sbyte b) => (sbyte)(b < 0 ? b * -1 : b);
+		public static short MakeNegative(short s) => (short)(s < 0 ? s * -1 : s);
+		public static int MakeNegative(int i) => i < 0 ? i * -1 : i;
+		public static long MakeNegative(long l) => l < 0 ? l * -1 : l;
+		public static float MakeNegative(float f) => f < 0 ? f * -1 : f;
+		public static double MakeNegative(double d) => d < 0 ? d * -1 : d;
+		public static decimal MakeNegative(decimal m) => m < 0 ? m * -1 : m;
 
 		public static float PercentOf(float min, float max, float t)
 		{
@@ -52,34 +56,35 @@ namespace cmdwtf.UnityTools
 			   || a + epsilon <= b
 			   || a - epsilon <= b;
 
-		public static short KeepIn360Degrees(short s)
+		public static short KeepIn360Degrees(short angle)
+			=> Repeat(angle, (short)360);
+		public static int KeepIn360Degrees(int angle)
+			=> Repeat(angle, 360);
+		public static long KeepIn360Degrees(long angle)
+			=> Repeat(angle, 360);
+		public static short Repeat(short t, short length)
+			=> (short)Mathf.Repeat(t, length);
+		public static int Repeat(int t, int length)
+			=> (int)Mathf.Repeat(t, length);
+		public static long Repeat(long t, long length)
+			=> (long)Mathf.Repeat(t, length);
+
+		public static float SmoothStep(float from, float to, float t)
+			// this exists in the unity math library
+			=> Mathf.SmoothStep(from, to, t);
+
+		public static double SmoothStep(double from, double to, double t)
 		{
-			while (s >= 360)
-			{
-				s -= 360;
-			}
-
-			while (s < 0)
-			{
-				s += 360;
-			}
-
-			return s;
+			t = t.Clamp01();
+			t = (-2.0 * t * t * t) + (3.0 * t * t);
+			return (to * t) + (@from * (1.0 - t));
 		}
 
-		public static int KeepIn360Degrees(int s)
+		public static decimal SmoothStep(decimal from, decimal to, decimal t)
 		{
-			while (s >= 360)
-			{
-				s -= 360;
-			}
-
-			while (s < 0)
-			{
-				s += 360;
-			}
-
-			return s;
+			t = t.Clamp01();
+			t = (-2.0m * t * t * t) + (3.0m * t * t);
+			return (to * t) + (@from * (1.0m - t));
 		}
 
 		public static Vector2 SmoothDamp(Vector2 cur, Vector2 tgt, ref Vector2 velocity, float time)
@@ -118,76 +123,7 @@ namespace cmdwtf.UnityTools
 		public static double ClosestMultiple(double x, double y)
 			=> System.Math.Round(x/y) * y;
 
-		public static ulong Clamp(this ulong v, ulong min, ulong max)
-			=> (v > max ? max : (v < min ? min : v));
-
-		public static uint Clamp(this uint v, uint min, uint max)
-			=> (v > max ? max : (v < min ? min : v));
-
-		public static ushort Clamp(this ushort v, ushort min, ushort max)
-			=> (v > max ? max : (v < min ? min : v));
-
-		public static float Clamp(this float v, float min, float max)
-			=> (v > max ? max : (v < min ? min : v));
-
-		public static sbyte Clamp(this sbyte v, sbyte min, sbyte max)
-			=> (v > max ? max : (v < min ? min : v));
-
-		public static long Clamp(this long v, long min, long max)
-			=> (v > max ? max : (v < min ? min : v));
-
-		public static int Clamp(this int v, int min, int max)
-			=> (v > max ? max : (v < min ? min : v));
-
-		public static short Clamp(this short v, short min, short max)
-			=> (v > max ? max : (v < min ? min : v));
-
-		public static double Clamp(this double v, double min, double max)
-			=> (v > max ? max : (v < min ? min : v));
-
-		public static decimal Clamp(this decimal v, decimal min, decimal max)
-			=> (v > max ? max : (v < min ? min : v));
-
-		public static byte Clamp(this byte v, byte min, byte max)
-			=> (v > max ? max : (v < min ? min : v));
-
-		public static Vector2 Clamp(this Vector2 v, Vector2 min, Vector2 max)
-			=> new Vector2(
-				v.x.Clamp(min.x, min.y),
-				v.y.Clamp(min.y, max.y)
-			);
-
-		public static Vector3 Clamp(this Vector3 v, Vector3 min, Vector3 max)
-			=> new Vector3(
-				v.x.Clamp(min.x, min.y),
-				v.y.Clamp(min.y, max.y),
-				v.z.Clamp(min.z, max.z)
-			);
-
-		public static Vector4 Clamp(this Vector4 v, Vector4 min, Vector4 max)
-			=> new Vector4(
-				v.x.Clamp(min.x, min.y),
-				v.y.Clamp(min.y, max.y),
-				v.z.Clamp(min.z, max.z),
-				v.w.Clamp(min.w, max.w)
-			);
-
-		public static short NthTriangular(this short n)
-			=> (short)((n * (n + 1)) / 2);
-
-		public static int NthTriangular(this int n)
-			=> (n * (n + 1)) / 2;
-
-		public static long NthTriangular(this long n)
-			=> (n * (n + 1)) / 2;
-
-		public static float NthTriangular(this float n)
-			=> (n * (n + 1)) / 2.0f;
-
-		public static double NthTriangular(this double n)
-			=> (n * (n + 1)) / 2.0d;
-
-		public static decimal NthTriangular(this decimal n)
-			=> (n * (n + 1)) / 2.0m;
+		public static Vector3 RandomVector(float min, float max)
+			=> new Vector3(Random.Range(min, max), Random.Range(min, max), Random.Range(min, max));
 	}
 }
