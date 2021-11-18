@@ -52,7 +52,22 @@ namespace cmdwtf.UnityTools.Attributes
 			Temporality = temporality;
 		}
 
-        public AutohookAttribute(AutohookContext context, AutohookVisibility visibility, AutohookTemporality temporality, string target)
+		public AutohookAttribute(AutohookContext context,
+								 AutohookVisibility visibility
+			) : this(context, visibility, AutohookTemporality.Editor, string.Empty)
+		{ }
+
+		public AutohookAttribute(AutohookContext context,
+								 AutohookVisibility visibility,
+								 AutohookTemporality temporality
+			) : this(context, visibility, temporality, string.Empty)
+		{ }
+
+		public AutohookAttribute(AutohookContext context,
+								 AutohookVisibility visibility,
+								 AutohookTemporality temporality,
+								 string target
+			)
         {
             Context = context;
             Visibility = visibility;
@@ -84,7 +99,7 @@ namespace cmdwtf.UnityTools.Attributes
 					return GetTargetGameObject().GetComponent(type);
 			}
 
-			return null;
+			throw new Exception($"Unsupported {nameof(Context)}: {Context}");
 		}
 
 		public Component GetComponentFromContext(MonoBehaviour behavior, Type type)
@@ -103,6 +118,30 @@ namespace cmdwtf.UnityTools.Attributes
 					Component[] options = behavior.GetComponentsInParent(type, true);
 					return options.Length > 0 ? options[0] : null;
 				}
+				case AutohookContext.Sibling:
+				{
+					if (behavior.transform.parent is null)
+					{
+						return null;
+					}
+
+					foreach (Transform sibling in behavior.transform.parent)
+					{
+						if (sibling.gameObject == behavior.gameObject)
+						{
+							continue;
+						}
+
+						Component found = sibling.GetComponent(type);
+
+						if (found != null)
+						{
+							return found;
+						}
+					}
+
+					return null;
+				}
 				case AutohookContext.Root:
 					return behavior.transform.root.GetComponent(type);
 #if UNITY_EDITOR
@@ -111,9 +150,8 @@ namespace cmdwtf.UnityTools.Attributes
 #endif // UNITY_EDITOR
 			}
 
-			// try the stateless contexts, or throw an exception.
-			return GetComponentFromContext(type)
-				   ?? throw new Exception($"Unsupported {nameof(Context)}: {Context}");
+			// try the stateless contexts
+			return GetComponentFromContext(type);
 		}
 
 #if UNITY_EDITOR
@@ -139,15 +177,38 @@ namespace cmdwtf.UnityTools.Attributes
 						Component[] options = component.GetComponentsInParent(type, true);
 						return options.Length > 0 ? options[0] : null;
 					}
+					case AutohookContext.Sibling:
+					{
+						if (component.transform.parent is null)
+						{
+							return null;
+						}
+
+						foreach (Transform sibling in component.transform.parent)
+						{
+							if (sibling.gameObject == component.gameObject)
+							{
+								continue;
+							}
+
+							Component found = sibling.GetComponent(type);
+
+							if (found != null)
+							{
+								return found;
+							}
+						}
+
+						return null;
+					}
 					case AutohookContext.Root:
 						return component.transform.root.GetComponent(type);
 					case AutohookContext.PrefabRoot:
 						return PrefabUtility.GetOutermostPrefabInstanceRoot(component.transform).GetComponent(type);
 				}
 
-				// try the stateless contexts, or throw an exception.
-				return GetComponentFromContext(type)
-					   ?? throw new Exception($"Unsupported {nameof(Context)}: {Context}");
+				// try the stateless contexts
+				return GetComponentFromContext(type);
 			}
 
 			throw new Exception($"{root.targetObject} is not a {nameof(Component)}.");
