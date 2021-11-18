@@ -1,25 +1,22 @@
+using System;
+using System.Linq;
+
 namespace cmdwtf.UnityTools.Filters
 {
 	public class WeightedMovingAverage : AverageBase<float>
 	{
 		public WeightedMovingAverage(int windowSize)
-			: base(windowSize)
-		{
-
-		}
+			: base(windowSize) { }
 
 		public override float Sample(float sample)
 		{
 			AppendSample(sample);
-			float accumulator = 0;
-			int scan = 1;
-			foreach (float s in Samples)
-			{
-				accumulator += (s * scan) / SampleCount.NthTriangular();
-				scan++;
-			}
+			int remainingSamples = SampleCount;
 
-			Value = accumulator;
+			float dividend = Samples.Sum(s => s * remainingSamples--);
+			float divisor = (SampleCount * (SampleCount + 1)) / 2.0f;
+
+			Value = dividend / divisor;
 			return Value;
 		}
 	}
