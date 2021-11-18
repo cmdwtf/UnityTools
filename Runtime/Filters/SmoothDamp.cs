@@ -1,3 +1,4 @@
+
 namespace cmdwtf.UnityTools.Filters
 {
 	public class SmoothDamp : TimeBasedMovingAverage
@@ -45,7 +46,7 @@ namespace cmdwtf.UnityTools.Filters
 
 			// Clamp maximum speed
 			float maxChange = maxSpeed * smoothTime;
-			change = Math.Clamp(change, -maxChange, maxChange);
+			change = change.Clamp(-maxChange, maxChange);
 			target = current - change;
 
 			float temp = (currentVelocity + (omega * change)) * deltaTime;
