@@ -2,87 +2,61 @@
 using System.Collections;
 using System.Collections.Generic;
 
-namespace Nito.Collections
+namespace cmdwtf.UnityTools.Collections
 {
-    internal static class CollectionHelpers
-    {
-        public static IReadOnlyCollection<T> ReifyCollection<T>(IEnumerable<T> source)
-        {
-            if (source == null)
-                throw new ArgumentNullException(nameof(source));
+	internal static class CollectionHelpers
+	{
+		public static IReadOnlyCollection<T> ReifyCollection<T>(IEnumerable<T> source)
+			=> source switch
+			{
+				null                             => throw new ArgumentNullException(nameof(source)),
+				IReadOnlyCollection<T> result    => result,
+				ICollection<T> collection        => new CollectionWrapper<T>(collection),
+				ICollection nongenericCollection => new NongenericCollectionWrapper<T>(nongenericCollection),
+				_                                => new List<T>(source),
+			};
 
-            var result = source as IReadOnlyCollection<T>;
-            if (result != null)
-                return result;
-            var collection = source as ICollection<T>;
-            if (collection != null)
-                return new CollectionWrapper<T>(collection);
-            var nongenericCollection = source as ICollection;
-            if (nongenericCollection != null)
-                return new NongenericCollectionWrapper<T>(nongenericCollection);
+		private sealed class NongenericCollectionWrapper<T> : IReadOnlyCollection<T>
+		{
+			private readonly ICollection _collection;
 
-            return new List<T>(source);
-        }
+			public NongenericCollectionWrapper(ICollection collection)
+			{
+				if (collection == null)
+				{
+					throw new ArgumentNullException(nameof(collection));
+				}
 
-        private sealed class NongenericCollectionWrapper<T> : IReadOnlyCollection<T>
-        {
-            private readonly ICollection _collection;
+				_collection = collection;
+			}
 
-            public NongenericCollectionWrapper(ICollection collection)
-            {
-                if (collection == null)
-                    throw new ArgumentNullException(nameof(collection));
-                _collection = collection;
-            }
+			public int Count => _collection.Count;
 
-            public int Count
-            {
-                get
-                {
-                    return _collection.Count;
-                }
-            }
+			public IEnumerator<T> GetEnumerator()
+			{
+				foreach (T item in _collection)
+				{
+					yield return item;
+				}
+			}
 
-            public IEnumerator<T> GetEnumerator()
-            {
-                foreach (T item in _collection)
-                    yield return item;
-            }
+			IEnumerator IEnumerable.GetEnumerator() => _collection.GetEnumerator();
+		}
 
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return _collection.GetEnumerator();
-            }
-        }
+		private sealed class CollectionWrapper<T> : IReadOnlyCollection<T>
+		{
+			private readonly ICollection<T> _collection;
 
-        private sealed class CollectionWrapper<T> : IReadOnlyCollection<T>
-        {
-            private readonly ICollection<T> _collection;
+			public CollectionWrapper(ICollection<T> collection)
+			{
+				_collection = collection ?? throw new ArgumentNullException(nameof(collection));
+			}
 
-            public CollectionWrapper(ICollection<T> collection)
-            {
-                if (collection == null)
-                    throw new ArgumentNullException(nameof(collection));
-                _collection = collection;
-            }
+			public int Count => _collection.Count;
 
-            public int Count
-            {
-                get
-                {
-                    return _collection.Count;
-                }
-            }
+			public IEnumerator<T> GetEnumerator() => _collection.GetEnumerator();
 
-            public IEnumerator<T> GetEnumerator()
-            {
-                return _collection.GetEnumerator();
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return _collection.GetEnumerator();
-            }
-        }
-    }
+			IEnumerator IEnumerable.GetEnumerator() => _collection.GetEnumerator();
+		}
+	}
 }

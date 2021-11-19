@@ -31,8 +31,9 @@ Copyright: 2021, Chris Marc Dailey
 License: 0BSD and Please-Report-Bugs
 
 Files: Runtime/Collections/Deque.cs Runtime/Collections/CollectionHelpers.cs
-Copyright: 2015, Stephen Cleary
-License: MIT
+Copyright: 2021, Chris Marc Dailey
+           2015, Stephen Cleary
+License: 0BSD and MIT
 
 License: GPL-3.0-only
                      GNU GENERAL PUBLIC LICENSE
