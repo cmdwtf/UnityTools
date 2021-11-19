@@ -3,19 +3,17 @@ using System.Collections;
 
 namespace cmdwtf.UnityTools.Filters
 {
-	public abstract class Butterworth<T> : IBiQuadFilter<T>
+	public abstract class Butterworth<T> : FilterBase<T>, IBiQuadFilter<T>
 	{
 		public float Resonance => First.Resonance;
 		public float Frequency => First.Frequency;
 		public int SampleRate => First.SampleRate;
-		public FilterType Type => First.Type;
-		public string Name => First.Name;
+		public override FilterType Type => First.Type;
+		public override string Name => First.Name;
 
 		protected Butterworth[] Filters { get; }
 
 		private Butterworth First => Filters[0];
-
-		public abstract T Value { get; }
 
 		protected Butterworth(int componentCount, float frequency, int sampleRate, ButterworthPassType passType, float resonance)
 		{
@@ -26,7 +24,7 @@ namespace cmdwtf.UnityTools.Filters
 			}
 		}
 
-		public virtual void Reset()
+		public override void Reset()
 		{
 			foreach (Butterworth f in Filters)
 			{
@@ -49,8 +47,5 @@ namespace cmdwtf.UnityTools.Filters
 
 			return Value;
 		}
-
-		public abstract T Sample(T samples);
-
 	}
 }

@@ -7,5 +7,6 @@ namespace cmdwtf.UnityTools.Filters
 		LowPass,
 		HighPass,
 		Average,
+		Transformation,
 	}
 }

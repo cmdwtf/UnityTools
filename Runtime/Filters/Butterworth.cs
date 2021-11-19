@@ -4,7 +4,7 @@ using SMath = System.Math;
 namespace cmdwtf.UnityTools.Filters
 {
 	// via: https://stackoverflow.com/a/19155926
-	public class Butterworth : IBiQuadFilter<float>
+	public class Butterworth : FilterBase<float>, IBiQuadFilter<float>
 	{
 		public const float ResonanceMax = 1.4142135623731f;
 		public const float ResonanceMin = 0.1f;
@@ -18,7 +18,7 @@ namespace cmdwtf.UnityTools.Filters
 		/// <inheritdoc/>
 		public int SampleRate { get; private set; }
 
-		public FilterType Type => _passType switch
+		public override FilterType Type => _passType switch
 		{
 			ButterworthPassType.Highpass => FilterType.HighPass,
 			ButterworthPassType.Lowpass => FilterType.LowPass,
@@ -72,13 +72,13 @@ namespace cmdwtf.UnityTools.Filters
 			}
 		}
 
-		public void Reset()
+		public override void Reset()
 		{
 			Array.Clear(_inputHistory,  0, _inputHistory.Length);
 			Array.Clear(_outputHistory, 0, _outputHistory.Length);
 		}
 
-		public float Sample(float sample)
+		public override float Sample(float sample)
 		{
 			float newOutput = (_a1 * sample) +
 							  (_a2 * _inputHistory[0]) +
@@ -96,6 +96,6 @@ namespace cmdwtf.UnityTools.Filters
 			return Value;
 		}
 
-		public float Value => _outputHistory[0];
+		public override float Value => _outputHistory[0];
 	}
 }
