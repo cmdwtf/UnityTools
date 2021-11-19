@@ -30,6 +30,10 @@ Copyright: 2021, Chris Marc Dailey
            20XX, Marrrk
 License: 0BSD and Please-Report-Bugs
 
+Files: Runtime/Collections/Deque.cs Runtime/Collections/CollectionHelpers.cs
+Copyright: 2015, Stephen Cleary
+License: MIT
+
 License: GPL-3.0-only
                      GNU GENERAL PUBLIC LICENSE
                         Version 3, 29 June 2007
@@ -775,7 +779,7 @@ License: BSD-2-clause
  WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR OTHERWISE)
  ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY
  OF SUCH DAMAGE.
- 
+
 License: 0BSD
  Permission to use, copy, modify, and/or distribute this software for any
  purpose with or without fee is hereby granted.
