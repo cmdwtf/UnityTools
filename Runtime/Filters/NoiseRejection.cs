@@ -5,7 +5,7 @@ using cmdwtf.UnityTools.Filters;
 
 using UnityEngine;
 
-namespace Marbles.Scripts.Input
+namespace cmdwtf.UnityTools.Filters
 {
 	public class NoiseRejection : StandardDeviationsFromMean
 	{
