@@ -1,10 +1,5 @@
 using System.Collections.Generic;
 
-using cmdwtf.UnityTools;
-using cmdwtf.UnityTools.Filters;
-
-using UnityEngine;
-
 namespace cmdwtf.UnityTools.Filters
 {
 	public class NoiseRejection : StandardDeviationsFromMean
@@ -32,7 +27,7 @@ namespace cmdwtf.UnityTools.Filters
 
 		public override float Sample(float sample)
 		{
-			float fromMean = Mathf.Abs(base.Sample(sample));
+			float fromMean = base.Sample(sample).Positive();
 
 			if (!IsValidDeviation(fromMean))
 			{
