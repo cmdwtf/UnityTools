@@ -39,5 +39,11 @@ namespace cmdwtf.UnityTools.Filters
 			float result = (sample - Average) / Sigma;
 			return result;
 		}
+
+		public override void Reset()
+		{
+			base.Reset();
+			Sigma = default;
+		}
 	}
 }

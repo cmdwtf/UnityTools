@@ -1,6 +1,8 @@
 using System;
 using System.Linq;
 
+using UnityEngine;
+
 namespace cmdwtf.UnityTools.Filters
 {
 	public class SimpleMovingAverage : AverageBase<float>
@@ -18,6 +20,12 @@ namespace cmdwtf.UnityTools.Filters
 			Accumulator -= AppendSample(sample);
 			Value = Accumulator / SampleCount;
 			return Value;
+		}
+
+		public override void Reset()
+		{
+			base.Reset();
+			Accumulator = 0;
 		}
 	}
 }
