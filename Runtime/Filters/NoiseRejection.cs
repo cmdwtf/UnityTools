@@ -1,3 +1,4 @@
+using System;
 using System.Collections.Generic;
 
 namespace cmdwtf.UnityTools.Filters
@@ -6,6 +7,9 @@ namespace cmdwtf.UnityTools.Filters
 	{
 		public int RejectionWindowSize { get; protected set; }
 		public float RejectionThreshold { get; protected set; }
+
+		public NoiseRejectionReplacementStrategy ReplacementStrategy { get; set; } =
+			NoiseRejectionReplacementStrategy.SimpleAverage;
 
 		private float PreviousSample { get; set; }
 
@@ -41,10 +45,20 @@ namespace cmdwtf.UnityTools.Filters
 						// found a valid one, reject the sample
 						UndoLastSampleAppend();
 
-						// use some of it's values, but weight it down with the average of the previous
-						//float previousAverages = _previousValues.SimpleAverage();
-						//sample = (sample + (previousAverages * _previousValues.Count)) / (_previousValues.Count + 1);
-						sample = PreviousSample;
+						switch (ReplacementStrategy)
+						{
+							case NoiseRejectionReplacementStrategy.Previous:
+								sample = PreviousSample;
+								break;
+							case NoiseRejectionReplacementStrategy.SimpleAverage:
+							{
+								// use some of it's values, but weight it down with the average of the previous
+								float previousAverages = _previousValues.SimpleAverage();
+								sample = (sample + (previousAverages * _previousValues.Count)) /
+										 (_previousValues.Count + 1);
+								break;
+							}
+						}
 
 						break;
 					}
