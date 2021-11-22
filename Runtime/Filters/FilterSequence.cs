@@ -7,7 +7,10 @@ namespace cmdwtf.UnityTools.Filters
 	public sealed class FilterSequence<T> : IFilter<T>
 	{
 		public FilterType Type => FilterType.Custom;
-		public string Name => string.Join(", ", Filters.Select(f => f.Name));
+
+		private string DefaultName => string.Join(", ", Filters.Select(f => f.Name));
+		private string _customName = null;
+		public string Name => _customName ?? DefaultName;
 		public T Value { get; private set; }
 		private Queue<IFilter<T>> Filters { get; } = new Queue<IFilter<T>>();
 
@@ -48,6 +51,12 @@ namespace cmdwtf.UnityTools.Filters
 			}
 
 			Filters.Enqueue(filter);
+		}
+
+		public FilterSequence<T> Named(string name)
+		{
+			_customName = name;
+			return this;
 		}
 	}
 }
