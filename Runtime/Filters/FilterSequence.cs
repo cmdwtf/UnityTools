@@ -2,9 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-using cmdwtf.UnityTools.Filters;
-
-namespace Marbles.Scripts.Input
+namespace cmdwtf.UnityTools.Filters
 {
 	public sealed class FilterSequence<T> : IFilter<T>
 	{
@@ -20,7 +18,7 @@ namespace Marbles.Scripts.Input
 				AddFilter(filter);
 			}
 		}
-		
+
 		public static FilterSequence<T> With(params IFilter<T>[] filters) => new FilterSequence<T>(filters);
 
 		public T Sample(T sample)
