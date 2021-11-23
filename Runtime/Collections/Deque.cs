@@ -2,6 +2,8 @@
 using System.Collections.Generic;
 using System.Diagnostics;
 
+#nullable enable
+
 namespace cmdwtf.UnityTools.Collections
 {
 	/// <summary>
