@@ -25,9 +25,6 @@ namespace cmdwtf.UnityTools.Filters
 			_ => FilterType.None,
 		};
 
-		private string _name;
-		public virtual string Name => _name ??= GetType().Name;
-
 		private readonly ButterworthPassType _passType;
 
 		private readonly float _c, _a1, _a2, _a3, _b1, _b2;
