@@ -6,16 +6,24 @@ namespace cmdwtf.UnityTools
 {
 	public static class StringExtensions
 	{
+		private static readonly Regex CamelCase = new Regex(@"(\B[A-Z])", RegexOptions.Compiled);
+		private static readonly Regex HexWithSpace = new Regex("[^a-fA-F0-9 ]+", RegexOptions.Compiled);
+		private static readonly Regex HexWithoutSpace = new Regex("[^a-fA-F0-9 ]+", RegexOptions.Compiled);
+
+		private const string SpaceAfterReplacement = @"$1 ";
+		private const string SpaceBeforeReplacement = @" $1";
+		private const string RemoveReplacement = @"";
+
 		public static string RemoveNonHexCharacters(this string s, bool allowSpaces)
 			=> allowSpaces
-				? Regex.Replace(s, "[^a-fA-F0-9 ]+", "", RegexOptions.Compiled)
-				: Regex.Replace(s, "[^a-fA-F0-9]+", "", RegexOptions.Compiled);
+				? HexWithSpace.Replace(s, RemoveReplacement)
+				: HexWithoutSpace.Replace(s, RemoveReplacement);
 
 		public static string InsertSpaces(this string s)
 			=> s.InsertSpacesEvery(2);
 
 		public static string InsertSpacesEvery(this string s, int charactersBetweenSpaces)
-			=> Regex.Replace(s, @$"(.{{{charactersBetweenSpaces}}})", "$1 ");
+			=> Regex.Replace(s, @$"(.{{{charactersBetweenSpaces}}})", SpaceAfterReplacement);
 
 		public static byte[] HexStringToByteArray(this string hex)
 		{
@@ -50,5 +58,8 @@ namespace cmdwtf.UnityTools
 
 		public static UnityEngine.GUIContent ToGUIContent(this string text)
 			=> new UnityEngine.GUIContent(text);
+
+		public static string SpaceCamelCase(this string camelCaseString)
+			=> CamelCase.Replace(camelCaseString, SpaceBeforeReplacement);
 	}
 }
