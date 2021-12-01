@@ -4,6 +4,7 @@ namespace cmdwtf.UnityTools
 {
 	public abstract class ScriptableObjectBase : ScriptableObject
 	{
+		public string Name => displayName;
 		public string displayName;
 
 		protected virtual void OnValidate()
