@@ -17,7 +17,8 @@ namespace cmdwtf.UnityTools.Attributes
 	/// The <see cref="Visibility"/> can be set to control how the field is
 	/// drawn in the inspector.
 	/// </summary>
-	public sealed class AutohookAttribute : PropertyAttribute
+	[AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+	public class AutohookAttribute : PropertyAttribute
     {
 		// binding flags used to reflect on types.
 		public const BindingFlags BindingFlags = System.Reflection.BindingFlags.IgnoreCase
@@ -54,7 +55,12 @@ namespace cmdwtf.UnityTools.Attributes
 
 		public AutohookAttribute(AutohookContext context,
 								 AutohookVisibility visibility
-			) : this(context, visibility, AutohookTemporality.Editor, string.Empty)
+		) : this(context, visibility, AutohookTemporality.Editor, string.Empty)
+		{ }
+
+		public AutohookAttribute(AutohookContext context,
+								 AutohookTemporality temporality
+		) : this(context, AutohookVisibility.Default, temporality, string.Empty)
 		{ }
 
 		public AutohookAttribute(AutohookContext context,
@@ -73,6 +79,16 @@ namespace cmdwtf.UnityTools.Attributes
             Visibility = visibility;
 			Temporality = temporality;
 			Target = target;
+		}
+
+		internal static void EnsureRuntimeHook(MonoBehaviour behavior)
+		{
+			if (Application.isEditor || behavior == null)
+			{
+				return;
+			}
+
+			AutohookInjection.InjectRuntimeOnDemandReferences(behavior);
 		}
 
 		public GameObject GetTargetGameObject()
@@ -216,9 +232,24 @@ namespace cmdwtf.UnityTools.Attributes
 
 		private static Type GetTypeFromProperty(SerializedProperty property)
 		{
-			Type parentComponentType = property.serializedObject.targetObject.GetType();
-			FieldInfo fieldInfo = parentComponentType.GetField(property.propertyPath, BindingFlags);
-			return fieldInfo?.FieldType;
+			// start with the actual serialized type,
+			Type owningComponentType = property.serializedObject.targetObject.GetType();
+
+			while (owningComponentType != null)
+			{
+				// find the field,
+				FieldInfo fieldInfo = owningComponentType.GetField(property.propertyPath, BindingFlags);
+
+				if (fieldInfo != null)
+				{
+					return fieldInfo.FieldType;
+				}
+
+				// if it didn't exist on this type, try the base type.
+				owningComponentType = owningComponentType.BaseType;
+			}
+
+			return null;
 		}
 
 #endif // UNITY_EDITOR

@@ -10,7 +10,7 @@ using Object = UnityEngine.Object;
 
 namespace cmdwtf.UnityTools.Editor
 {
-    [CustomPropertyDrawer(typeof(AutohookAttribute))]
+    [CustomPropertyDrawer(typeof(AutohookAttribute), useForChildren: true)]
     internal sealed class AutohookPropertyDrawer : PropertyDrawer
     {
         private AutohookVisibility _autohookVisibility;
@@ -19,22 +19,16 @@ namespace cmdwtf.UnityTools.Editor
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
         {
-            Component component = FindAutohookTarget(property);
-            if (component != null)
-            {
-                if (property.objectReferenceValue == null)
-				{
-					property.objectReferenceValue = component;
-				}
+            Component component = InjectNow(property);
 
-				if (_autohookVisibility == AutohookVisibility.Hidden)
-				{
-					return;
-				}
+            if (component != null && _autohookVisibility == AutohookVisibility.Hidden)
+            {
+				return;
 			}
 
             bool guiEnabled = GUI.enabled;
-            if (_autohookVisibility == AutohookVisibility.Disabled && component != null)
+
+            if (component != null && _autohookVisibility == AutohookVisibility.Disabled)
 			{
 				GUI.enabled = false;
 			}
@@ -58,7 +52,7 @@ namespace cmdwtf.UnityTools.Editor
         {
             UpdateVisibility();
 
-            Component component = FindAutohookTarget(property);
+            Component component = InjectNow(property);
             if (component != null && _autohookVisibility == AutohookVisibility.Hidden)
 			{
 				return 0;
@@ -67,9 +61,9 @@ namespace cmdwtf.UnityTools.Editor
 			return base.GetPropertyHeight(property, label);
         }
 
-        private Component FindAutohookTarget(SerializedProperty property)
+		private Component InjectNow(SerializedProperty property)
 			=> Attribute.Temporality != AutohookTemporality.Editor
 				   ? null
-				   : Attribute.GetComponentFromContext(property);
+				   : AutohookInjection.InjectSerializedReference(Attribute, property);
 	}
 }
