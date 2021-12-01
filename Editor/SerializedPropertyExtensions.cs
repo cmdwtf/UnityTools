@@ -13,7 +13,7 @@ namespace cmdwtf.UnityTools.Editor
 	public static class SerializedPropertyExtensions
 	{
         private static readonly Regex ArrayElementRegex = new Regex(@"\GArray\.data\[(\d+)\]", RegexOptions.Compiled);
-        
+
         /// (Extension) Get the value of the serialized property.
         public static object GetValue(this SerializedProperty property)
         {
@@ -39,7 +39,7 @@ namespace cmdwtf.UnityTools.Editor
 
             throw new InvalidCastException($"Couldn't convert {property.name} to {typeof(T).FullName}");
         }
-        
+
         /// (Extension) Set the value of the serialized property.
         public static void SetValue(this SerializedProperty property, object value)
         {
@@ -87,11 +87,11 @@ namespace cmdwtf.UnityTools.Editor
         //      int i = 0;
         //      NextPropertyPathToken(propertyPath, ref i, out var component);
         //          => component = { propertyName = "quests" };
-        //      NextPropertyPathToken(propertyPath, ref i, out var component) 
+        //      NextPropertyPathToken(propertyPath, ref i, out var component)
         //          => component = { elementIndex = 0 };
-        //      NextPropertyPathToken(propertyPath, ref i, out var component) 
+        //      NextPropertyPathToken(propertyPath, ref i, out var component)
         //          => component = { propertyName = "goal" };
-        //      NextPropertyPathToken(propertyPath, ref i, out var component) 
+        //      NextPropertyPathToken(propertyPath, ref i, out var component)
         //          => returns false
         private static bool NextPathComponent(string propertyPath, ref int index, out PropertyPathComponent component)
         {
