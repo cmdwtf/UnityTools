@@ -33,52 +33,52 @@ namespace cmdwtf.UnityTools
 			return percent;
 		}
 
-		public static float LerpNoClamp(float from, float to, float t)
+		public static float LerpUnclamped(float from, float to, float t)
 			=> from + ((to - from) * t);
 
-		public static Vector2 LerpNoClamp(Vector2 from, Vector2 to, Vector2 t)
+		public static Vector2 LerpUnclamped(Vector2 from, Vector2 to, Vector2 t)
 			=> new Vector2(
-				LerpNoClamp(from.x, to.x, t.x),
-				LerpNoClamp(from.y, to.y, t.y)
+				LerpUnclamped(from.x, to.x, t.x),
+				LerpUnclamped(from.y, to.y, t.y)
 			);
 
-		public static Vector3 LerpNoClamp(Vector3 from, Vector3 to, Vector3 t)
+		public static Vector3 LerpUnclamped(Vector3 from, Vector3 to, Vector3 t)
 			=> new Vector3(
-				LerpNoClamp(from.x, to.x, t.x),
-				LerpNoClamp(from.y, to.y, t.y),
-				LerpNoClamp(from.z, to.z, t.z)
+				LerpUnclamped(from.x, to.x, t.x),
+				LerpUnclamped(from.y, to.y, t.y),
+				LerpUnclamped(from.z, to.z, t.z)
 			);
 
-		public static Vector4 LerpNoClamp(Vector4 from, Vector4 to, Vector4 t)
+		public static Vector4 LerpUnclamped(Vector4 from, Vector4 to, Vector4 t)
 			=> new Vector4(
-				LerpNoClamp(from.x, to.x, t.x),
-				LerpNoClamp(from.y, to.y, t.y),
-				LerpNoClamp(from.z, to.z, t.z),
-				LerpNoClamp(from.w, to.w, t.w)
+				LerpUnclamped(from.x, to.x, t.x),
+				LerpUnclamped(from.y, to.y, t.y),
+				LerpUnclamped(from.z, to.z, t.z),
+				LerpUnclamped(from.w, to.w, t.w)
 			);
 
-		public static float InverseLerpNoClamp(float from, float to, float t)
+		public static float InverseLerpUnclamped(float from, float to, float t)
 			=> (t - from) / (to - from);
 
-		public static Vector2 InverseLerpNoClamp(Vector2 from, Vector2 to, Vector2 t)
+		public static Vector2 InverseLerpUnclamped(Vector2 from, Vector2 to, Vector2 t)
 			=> new Vector2(
-				InverseLerpNoClamp(from.x, to.x, t.x),
-				InverseLerpNoClamp(from.y, to.y, t.y)
+				InverseLerpUnclamped(from.x, to.x, t.x),
+				InverseLerpUnclamped(from.y, to.y, t.y)
 			);
 
-		public static Vector3 InverseLerpNoClamp(Vector3 from, Vector3 to, Vector3 t)
+		public static Vector3 InverseLerpUnclamped(Vector3 from, Vector3 to, Vector3 t)
 			=> new Vector3(
-				InverseLerpNoClamp(from.x, to.x, t.x),
-				InverseLerpNoClamp(from.y, to.y, t.y),
-				InverseLerpNoClamp(from.z, to.z, t.z)
+				InverseLerpUnclamped(from.x, to.x, t.x),
+				InverseLerpUnclamped(from.y, to.y, t.y),
+				InverseLerpUnclamped(from.z, to.z, t.z)
 			);
 
-		public static Vector4 InverseLerpNoClamp(Vector4 from, Vector4 to, Vector4 t)
+		public static Vector4 InverseLerpUnclamped(Vector4 from, Vector4 to, Vector4 t)
 			=> new Vector4(
-				InverseLerpNoClamp(from.x, to.x, t.x),
-				InverseLerpNoClamp(from.y, to.y, t.y),
-				InverseLerpNoClamp(from.z, to.z, t.z),
-				InverseLerpNoClamp(from.w, to.w, t.w)
+				InverseLerpUnclamped(from.x, to.x, t.x),
+				InverseLerpUnclamped(from.y, to.y, t.y),
+				InverseLerpUnclamped(from.z, to.z, t.z),
+				InverseLerpUnclamped(from.w, to.w, t.w)
 			);
 
 		public static bool GreaterThanEpsilon(float a, float b, float epsilon)
