@@ -10,9 +10,9 @@ namespace cmdwtf.UnityTools.Editor
 	public class DebugOnlyProcessorEditor : InputParameterEditor<DebugOnlyProcessor>
 	{
 		private const string Prefix = "Allow In ";
-		private GUIContent _inEditorContent = new GUIContent(Prefix + "Editor");
-		private GUIContent _inDebugBuildContent = new GUIContent(Prefix + "Debug Build");
-		private GUIContent _inReleaseBuildContent = new GUIContent(Prefix + "Release Build");
+		private readonly GUIContent _inEditorContent = new GUIContent(Prefix + "Editor");
+		private readonly GUIContent _inDebugBuildContent = new GUIContent(Prefix + "Debug Build");
+		private readonly GUIContent _inReleaseBuildContent = new GUIContent(Prefix + "Release Build");
 
 		public override void OnGUI()
 		{

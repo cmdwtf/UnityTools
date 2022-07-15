@@ -1,3 +1,5 @@
+using System;
+
 using UnityEngine;
 
 namespace cmdwtf.UnityTools.Attributes
@@ -5,6 +7,7 @@ namespace cmdwtf.UnityTools.Attributes
 	/// <summary>
 	/// Attribute that require implementation of the provided interface.
 	/// </summary>
+	[AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
 	public class RequireInterfaceAttribute : PropertyAttribute
 	{
 		// Interface type.

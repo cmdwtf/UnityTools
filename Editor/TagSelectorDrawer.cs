@@ -11,8 +11,8 @@ namespace cmdwtf.UnityTools.Editor
 	//Original by DYLAN ENGELMAN http://jupiterlighthousestudio.com/custom-inspectors-unity/
 	//Altered by Brecht Lecluyse http://www.brechtos.com
 
-	[CustomPropertyDrawer(typeof(TagSelectorAttribute))]
-	public class TagSelectorDrawer : PropertyDrawer
+	[UnityEditor.CustomPropertyDrawer(typeof(TagSelectorAttribute))]
+	public class TagSelectorDrawer : CustomPropertyDrawer
 	{
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{

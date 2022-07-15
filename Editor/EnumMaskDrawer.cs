@@ -6,8 +6,8 @@ using UnityEngine;
 
 namespace cmdwtf.UnityTools.Editor
 {
-	[CustomPropertyDrawer(typeof(EnumMaskAttribute))]
-	public class EnumMaskAttributePropertyDrawer : PropertyDrawer
+	[UnityEditor.CustomPropertyDrawer(typeof(EnumMaskAttribute))]
+	public class EnumMaskAttributeDrawer : CustomPropertyDrawer
 	{
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{

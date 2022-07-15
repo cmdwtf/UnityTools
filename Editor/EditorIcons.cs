@@ -1,5 +1,3 @@
-#if UNITY_EDITOR
-
 using UnityEngine;
 using UnityEditor;
 using System.Collections.Generic;
@@ -36,7 +34,7 @@ public class EditorIcons : EditorWindow
 
 			search = EditorGUILayout.TextField(search, EditorStyles.toolbarSearchField);
             if ( GUILayout.Button(EditorGUIUtility.IconContent("winbtn_mac_close_h"), //SVN_DeletedLocal
-                EditorStyles.toolbarButton, 
+                EditorStyles.toolbarButton,
                 GUILayout.Width(22))
             )
 			{
@@ -70,7 +68,7 @@ public class EditorIcons : EditorWindow
         //List<string> found = new List<string>();
         List<string> unique = new List<string>();
         //var skip_flag = HideFlags.HideInInspector | HideFlags.HideAndDontSave;
-        //int unique_to_resources = 0, skipped_empty_str = 0, skipped_flags = 0, 
+        //int unique_to_resources = 0, skipped_empty_str = 0, skipped_flags = 0,
         //    skipped_not_persistent = 0, skipped_nulls = 0, unique_to_list = 0;
 
         foreach (Texture2D x in Resources.FindObjectsOfTypeAll<Texture2D>())
@@ -82,11 +80,11 @@ public class EditorIcons : EditorWindow
             GUIContent icoContent = GetIcon( x.name );
             if ( icoContent == null )
 			{
-				continue; // skipped 14 icons 
+				continue; // skipped 14 icons
 			}
-			//{ 
-            //    skipped_nulls++; 
-            //    continue; 
+			//{
+            //    skipped_nulls++;
+            //    continue;
             //}
 
             if (!all_icons.Contains(x.name))
@@ -94,7 +92,7 @@ public class EditorIcons : EditorWindow
                 //unique_to_resources++;
                 unique.Add(x.name);
             }
-            
+
             //found.Add( x.name );
         }
 
@@ -129,7 +127,7 @@ public class EditorIcons : EditorWindow
         {
             GUILayout.Label("Select what icons to show", GUILayout.Width( 160 ));
             viewBigIcons = GUILayout.SelectionGrid(
-              viewBigIcons ? 1 : 0, new string[] { "Small", "Big" }, 
+              viewBigIcons ? 1 : 0, new string[] { "Small", "Big" },
               2 , EditorStyles.toolbarButton) == 1;
 
             if (isWide)
@@ -219,12 +217,12 @@ public class EditorIcons : EditorWindow
             {
                 GUILayout.Space(2);
 
-                GUILayout.Button(iconSelected, 
-                    darkPreview? iconPreviewBlack:iconPreviewWhite, 
+                GUILayout.Button(iconSelected,
+                    darkPreview? iconPreviewBlack:iconPreviewWhite,
                     GUILayout.Width(128), GUILayout.Height( viewBigIcons ? 128 : 40 ));
-                
+
                 GUILayout.Space(5);
-                
+
                 darkPreview = GUILayout.SelectionGrid(
                   darkPreview ? 1 : 0, new string[] { "Light", "Dark" },
                   2, EditorStyles.miniButton) == 1;
@@ -241,10 +239,25 @@ public class EditorIcons : EditorWindow
                 s += $"\nTotal {iconContentListAll.Count} icons";
                 GUILayout.Space(5);
                 EditorGUILayout.HelpBox(s,MessageType.None);
+
+                if (AssetDatabase.TryGetGUIDAndLocalFileIdentifier(iconSelected.image, out string guid,
+	                    out long localid))
+                {
+	                string objectJson = @$"UnityEditor.ObjectWrapperJSON:{{""guid"":""{guid}"",""localId"":{localid},""type"":0,""instanceID"":0}}";
+	                GUILayout.Space(5);
+	                EditorGUILayout.TextField(objectJson);
+
+	                if(GUILayout.Button("Copy Object JSON",EditorStyles.miniButton))
+	                {
+		                EditorGUIUtility.systemCopyBuffer = objectJson;
+	                }
+                }
+
                 GUILayout.Space(5);
                 EditorGUILayout.TextField("EditorGUIUtility.IconContent(\"" + iconSelected.tooltip + "\")");
+
                 GUILayout.Space(5);
-                if(GUILayout.Button("Copy to clipboard",EditorStyles.miniButton))
+                if(GUILayout.Button("Copy Icon Name",EditorStyles.miniButton))
 				{
 					EditorGUIUtility.systemCopyBuffer = iconSelected.tooltip;
 				}
@@ -296,7 +309,7 @@ public class EditorIcons : EditorWindow
 
         iconPreviewBlack = new GUIStyle(iconButtonStyle);
         AllTheTEXTURES( ref iconPreviewBlack, Texture2DPixel(new Color(0.15f,0.15f,0.15f)));
-        
+
         iconPreviewWhite = new GUIStyle(iconButtonStyle);
         AllTheTEXTURES( ref iconPreviewWhite, Texture2DPixel(new Color(0.85f, 0.85f, 0.85f)));
 
@@ -308,7 +321,7 @@ public class EditorIcons : EditorWindow
         for (var i = 0; i < ico_list.Length; ++i)
         {
             GUIContent ico = GetIcon( ico_list[ i ] );
-            
+
             if( ico == null )
             {
                 iconMissingNames.Add(ico_list[i]);
@@ -318,7 +331,7 @@ public class EditorIcons : EditorWindow
             ico.tooltip = ico_list[i];
 
             iconContentListAll.Add(ico);
-            
+
             if ( !( ico.image.width <= 36 || ico.image.height <= 36 ) )
 			{
 				iconContentListBig.Add(ico);
@@ -335,7 +348,7 @@ public class EditorIcons : EditorWindow
 
     #region ICONS
 
-    public static string[] ico_list = 
+    public static string[] ico_list =
     {
         "_Help","_Popup","aboutwindow.mainheader","ageialogo","AlphabeticalSorting","Animation.AddEvent",
         "Animation.AddKeyframe","Animation.EventMarker","Animation.FirstKey","Animation.LastKey",
@@ -686,4 +699,3 @@ public class EditorIcons : EditorWindow
 
     #endregion
 }
-#endif

@@ -10,8 +10,8 @@ using Object = UnityEngine.Object;
 
 namespace cmdwtf.UnityTools.Editor
 {
-    [CustomPropertyDrawer(typeof(AutohookAttribute), useForChildren: true)]
-    internal sealed class AutohookPropertyDrawer : PropertyDrawer
+    [UnityEditor.CustomPropertyDrawer(typeof(AutohookAttribute), useForChildren: true)]
+    internal sealed class AutohookDrawer : CustomPropertyDrawer
     {
         private AutohookVisibility _autohookVisibility;
 

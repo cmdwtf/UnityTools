@@ -7,9 +7,11 @@ using UnityEngine;
 namespace cmdwtf.UnityTools.Editor
 {
 	// via http://www.sharkbombs.com/2015/02/17/unity-editor-enum-flags-as-toggle-buttons/
-	[CustomPropertyDrawer(typeof(EnumFlagAttribute))]
-	public class EnumFlagsAttributeDrawer : PropertyDrawer
+	[UnityEditor.CustomPropertyDrawer(typeof(EnumFlagAttribute))]
+	public class EnumFlagsDrawer : CustomPropertyDrawer
 	{
+		private static readonly GUIStyle ToggleGuiStyle = GUI.skin.button;
+
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
 			int buttonsIntValue = 0;
@@ -30,7 +32,7 @@ namespace cmdwtf.UnityTools.Editor
 
 				var buttonPos = new Rect(position.x + EditorGUIUtility.labelWidth + (buttonWidth * i), position.y, buttonWidth, position.height);
 
-				buttonPressed[i] = GUI.Toggle(buttonPos, buttonPressed[i], property.enumNames[i],  "Button");
+				buttonPressed[i] = GUI.Toggle(buttonPos, buttonPressed[i], property.enumNames[i],  ToggleGuiStyle);
 
 				if (buttonPressed[i])
 				{

@@ -1,15 +1,16 @@
-using cmdwtf.UnityTools;
-
 using UnityEditor;
 
 using UnityEngine;
 
 namespace cmdwtf.UnityTools.Editor
 {
+	/// <summary>
+	/// Utilities specific to the <see cref="EditorGUILayout"/> class.
+	/// </summary>
 	public static class EditorGUILayoutEx
 	{
-		private static Rect? _lastRect = null;
-		
+		private static Rect? _lastRect;
+
 		/// <inheritdoc cref="EditorGUI.DropdownButton(UnityEngine.Rect,UnityEngine.GUIContent,UnityEngine.FocusType)"/>
 		public static bool DropdownButtonLabeled(string label,
 												 string dropdownContent,
@@ -45,22 +46,18 @@ namespace cmdwtf.UnityTools.Editor
 												 GUIStyle dropdownStyle = null
 		)
 		{
-			const float fortyPercent = 0.4f;
-			const float sixtyPercent = 0.6f;
-
 			// get a 'whole' rect for our control.
 			Rect rect = EditorGUILayout.GetControlRect();
 
 			// duplicate the main rect, and shrink it
 			// to 40% for the label.
-			var labelRect = new Rect(rect);
-			labelRect.width *= fortyPercent;
+			var labelRect = new Rect(rect) { width = EditorGUIUtility.labelWidth };
 
 			// duplicate the main rect, and shrink it
 			// to 60% for the dropdown button, and
 			// scoot it over the width of the label.
 			var dropdownRect = new Rect(rect);
-			dropdownRect.width *= sixtyPercent;
+			dropdownRect.width = EditorGUIUtility.fieldWidth;
 			dropdownRect.x += labelRect.width;
 
 			// draw the label
@@ -81,6 +78,26 @@ namespace cmdwtf.UnityTools.Editor
 					   ? EditorGUI.DropdownButton(dropdownRect, dropdownContent, dropdownFocusType, dropdownStyle)
 					   : EditorGUI.DropdownButton(dropdownRect, dropdownContent, dropdownFocusType);
 		}
+
+		public static void DropShadowLabel(GUIContent content, GUIStyle style = default)
+		{
+			Rect r = EditorGUILayout.GetControlRect();
+
+			if (style == default)
+			{
+				EditorGUI.DropShadowLabel(r, content);
+			}
+			else
+			{
+				EditorGUI.DropShadowLabel(r, content, style);
+			}
+
+			_lastRect = r;
+		}
+
+		public static void DropShadowLabel(string text, GUIStyle style = default)
+			=> DropShadowLabel(new GUIContent(text), style);
+
 
 		/// <inheritdoc cref="GUILayoutUtility.GetLastRect"/>
 		public static Rect GetLastRect()

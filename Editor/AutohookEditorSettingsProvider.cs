@@ -23,11 +23,13 @@ namespace cmdwtf.UnityTools.Editor
 					settings.defaultVisibility =
 						(AutohookVisibility)EditorGUILayout.EnumPopup("Default Visibility", settings.defaultVisibility);
 
-					if (EditorGUI.EndChangeCheck())
+					if (!EditorGUI.EndChangeCheck())
 					{
-						settings.Validate();
-						settings.MarkDirty();
+						return;
 					}
+
+					settings.Validate();
+					settings.MarkDirty();
 				},
 
 				// Populate the search keywords to enable smart search filtering and label highlighting:

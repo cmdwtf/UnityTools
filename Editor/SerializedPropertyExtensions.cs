@@ -1,5 +1,6 @@
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text.RegularExpressions;
 
@@ -9,7 +10,10 @@ using UnityEngine;
 
 namespace cmdwtf.UnityTools.Editor
 {
-    // via: https://gist.github.com/aholkner/214628a05b15f0bb169660945ac7923b
+	/// <summary>
+	/// Extensions for dealing with <see cref="SerializedProperty"/>.
+	/// Some code via: https://gist.github.com/aholkner/214628a05b15f0bb169660945ac7923b
+	/// </summary>
 	public static class SerializedPropertyExtensions
 	{
         private static readonly Regex ArrayElementRegex = new Regex(@"\GArray\.data\[(\d+)\]", RegexOptions.Compiled);
@@ -75,6 +79,21 @@ namespace cmdwtf.UnityTools.Editor
         {
             public string PropertyName;
             public int ElementIndex;
+        }
+
+        /// <summary>
+        /// Gets the names of all properties on the given property.
+        /// </summary>
+        /// <param name="property">The property go get the names from.</param>
+        /// <returns>The names from the properties.</returns>
+        public static IEnumerable<string> GetAllPropertyNames(this SerializedProperty property)
+        {
+	        IEnumerator props = property.GetEnumerator();
+
+	        while (props.MoveNext())
+	        {
+		        yield return (props.Current as SerializedProperty)?.name;
+	        }
         }
 
         // Parse the next path component from a SerializedProperty.propertyPath.  For simple field/property access,

@@ -9,17 +9,22 @@ namespace cmdwtf.UnityTools.Editor
 	///
 	/// Based on https://forum.unity.com/threads/cannot-serialize-a-guid-field-in-class.156862/#post-6996680 by Searous
 	/// </summary>
-	[CustomPropertyDrawer(typeof(SerializableGuid))]
-	public class SerializableGuidPropertyDrawer : PropertyDrawer
+	[UnityEditor.CustomPropertyDrawer(typeof(SerializableGuid))]
+	public class SerializableGuidPropertyDrawer : CustomPropertyDrawer
 	{
+		private const string NewText = "New";
+		private const string CopyText = "Copy";
+		private const string EmptyText = "Empty";
+
 		public static bool AllowEditing { get; set; } = true;
-		private static int ControlLines => AllowEditing ? 2 : 1;
+
+		protected override int PropertyLineCount => AllowEditing ? 2 : 1;
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{
 			float lineHeight = EditorGUIUtility.singleLineHeight;
 			float spacer = EditorGUIUtility.standardVerticalSpacing;
-			float horizontalSpacer = spacer * 2;
+			float horizontalSpacer = Constants.StandardHorizontalSpacing;
 
 			// Start property draw
 			using var scope = new EditorGUI.PropertyScope(position, label, property);
@@ -30,10 +35,10 @@ namespace cmdwtf.UnityTools.Editor
 
 			GUI.enabled = AllowEditing;
 
-			position.height -= spacer * (ControlLines - 1);
+			position.height -= spacer * (PropertyLineCount - 1);
 
 			// Draw label centered
-			if (ControlLines > 1)
+			if (PropertyLineCount > 1)
 			{
 				position = position.EditorGUICenterVertical();
 			}
@@ -41,7 +46,7 @@ namespace cmdwtf.UnityTools.Editor
 			position = EditorGUI.PrefixLabel(position, GUIUtility.GetControlID(FocusType.Passive), label);
 
 			// Bump the other controls back off the 'centered' line position.
-			if (ControlLines > 1)
+			if (PropertyLineCount > 1)
 			{
 				position.y -= lineHeight / 2f;
 			}
@@ -54,21 +59,21 @@ namespace cmdwtf.UnityTools.Editor
 				Rect buttonRect = position.EditorGUILineHeightTabs(3, horizontalSpacer);
 
 				// Buttons
-				if (GUI.Button(buttonRect, "New"))
+				if (GUI.Button(buttonRect, NewText))
 				{
 					serializedGuid.stringValue = System.Guid.NewGuid().ToString();
 				}
 
 				buttonRect.EditorGUINextTab(horizontalSpacer);
 
-				if (GUI.Button(buttonRect, "Copy"))
+				if (GUI.Button(buttonRect, CopyText))
 				{
 					EditorGUIUtility.systemCopyBuffer = serializedGuid.stringValue;
 				}
 
 				buttonRect.EditorGUINextTab(horizontalSpacer);
 
-				if (GUI.Button(buttonRect, "Empty"))
+				if (GUI.Button(buttonRect, EmptyText))
 				{
 					serializedGuid.stringValue = System.Guid.Empty.ToString();
 				}
@@ -79,12 +84,6 @@ namespace cmdwtf.UnityTools.Editor
 			EditorGUI.PropertyField(position, serializedGuid, GUIContent.none);
 
 			GUI.enabled = true;
-		}
-
-		public override float GetPropertyHeight(SerializedProperty property, GUIContent label)
-		{
-			float controlHeight = EditorGUIUtility.singleLineHeight * ControlLines;
-			return controlHeight + (EditorGUIUtility.standardVerticalSpacing * ControlLines);
 		}
 	}
 }

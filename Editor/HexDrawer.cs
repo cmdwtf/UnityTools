@@ -9,8 +9,8 @@ using UnityEngine;
 
 namespace cmdwtf.UnityTools.Editor
 {
-	[CustomPropertyDrawer(typeof(HexAttribute))]
-	public class HexAttributeEditor : PropertyDrawer
+	[UnityEditor.CustomPropertyDrawer(typeof(HexAttribute))]
+	public class HexDrawer : CustomPropertyDrawer
 	{
 		public override void OnGUI(Rect rect, SerializedProperty property, GUIContent label)
 		{
