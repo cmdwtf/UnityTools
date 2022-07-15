@@ -3,14 +3,14 @@ Upstream-Name: cmd.wtf Unity Tools
 Upstream-Contact: https://cmd.wtf/contact
 Source: https://github.com/cmdwtf/UnityTools
 License: 0BSD
-Copyright: 2021, Chris Marc Dailey
+Copyright: 2022, Chris Marc Dailey
 
 Files: *
-Copyright: 2021, Chris Marc Dailey
+Copyright: 2022, Chris Marc Dailey
 License: 0BSD
 
 Files: Runtime/Attributes/Autohook*.cs Editor/Autohook*.cs
-Copyright: 2021, Chris Marc Dailey
+Copyright: 2022, Chris Marc Dailey
            2020, Bruno Andre Mikoski
 License: 0BSD and MIT
 
