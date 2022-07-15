@@ -1,11 +1,11 @@
 {
   "name": "wtf.cmd.tools",
-  "version": "0.0.5",
+  "version": "0.0.6",
   "displayName": "cmd.wtf Unity Tools",
   "description": "A small collection of tools that multiple projects make use of.",
   "category": "Libraries",
   "dependencies": {
-    "r2d2rigo.dotnetzip-for-unity": "1.9.1"
+    "com.unity.inputsystem": "1.3.0"
   },
   "unity": "2018.1",
   "keywords": [
@@ -19,9 +19,12 @@
     "threading",
     "tasks",
     "coroutines",
-	"autohook",
-	"getcomponent",
-	"findcomponent"
+    "autohook",
+    "getcomponent",
+    "findcomponent",
+    "dynamics",
+    "math",
+    "interpolation"
   ],
   "author": {
     "name": "Chris Marc Dailey (nitz)",
