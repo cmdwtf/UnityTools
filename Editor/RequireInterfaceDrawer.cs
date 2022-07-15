@@ -8,8 +8,8 @@ namespace cmdwtf.UnityTools.Editor
 	/// <summary>
 	/// Drawer for the RequireInterface attribute.
 	/// </summary>
-	[CustomPropertyDrawer(typeof(RequireInterfaceAttribute))]
-	public class RequireInterfaceDrawer : PropertyDrawer
+	[UnityEditor.CustomPropertyDrawer(typeof(RequireInterfaceAttribute))]
+	public class RequireInterfaceDrawer : CustomPropertyDrawer
 	{
 		/// <summary>
 		/// Overrides GUI drawing for the attribute.

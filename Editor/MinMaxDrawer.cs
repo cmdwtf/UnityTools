@@ -7,8 +7,8 @@ using UnityEditor;
 namespace cmdwtf.UnityTools.Editor
 {
 	// Thanks, Lotte https://gist.github.com/LotteMakesStuff/0de9be35044bab97cbe79b9ced695585
-	[CustomPropertyDrawer(typeof(MinMaxAttribute))]
-	public class MinMaxDrawer : CustomPropertyDrawerBase
+	[UnityEditor.CustomPropertyDrawer(typeof(MinMaxAttribute))]
+	public class MinMaxDrawer : CustomPropertyDrawer
 	{
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
 		{

@@ -156,6 +156,10 @@ namespace cmdwtf.UnityTools
 
 		public static bool IsCloud(this RuntimePlatform rp)
 			=> rp == RuntimePlatform.Stadia ||
+#if UNITY_2022_1_OR_NEWER
+			   rp == RuntimePlatform.LinuxPlayer;
+#else
 			   rp == RuntimePlatform.CloudRendering;
+#endif // UNITY_2022_1_OR_NEWER
 	}
 }

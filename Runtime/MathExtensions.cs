@@ -2,8 +2,6 @@ using System;
 
 using UnityEngine;
 
-using Random = UnityEngine.Random;
-
 namespace cmdwtf.UnityTools
 {
 	public static class MathExtensions

@@ -10,13 +10,14 @@ namespace cmdwtf.UnityTools.Editor
 {
 	public abstract class CustomEditorBase : UnityEditor.Editor
 	{
-		protected List<string> _ignoredPropertyNames = new List<string>{ "m_Script" };
-		
-		private List<IEnumerator> _runningCoroutines = new List<IEnumerator>();
+		protected readonly List<string> IgnoredPropertyNames = new List<string>{ "m_Script" };
+
+		private readonly List<IEnumerator> _runningCoroutines;
 		private string ObjectName => target == null ? string.Empty : target.name;
 
 		protected CustomEditorBase()
 		{
+			_runningCoroutines = new List<IEnumerator>();
 			EditorApplication.update += Update;
 		}
 
@@ -40,20 +41,26 @@ namespace cmdwtf.UnityTools.Editor
 			}
 		}
 
-		protected void DoChildEditor(Component child, bool recurse = true)
+		protected bool DoInspector(SerializedObject serialized, bool skipFirst = false, bool recurse = true, bool showHidden = false)
 		{
-			if (child == null)
+			SerializedProperty prop = serialized.GetIterator();
+
+			// next(true) must be called to get the first element.
+
+			System.Func<bool, bool> nextFunc = showHidden
+				? prop.Next
+				: prop.NextVisible;
+
+			nextFunc(true);
+
+			if (skipFirst)
 			{
-				return;
+				EditorGUILayout.PropertyField(prop);
 			}
 
-			var serialized = new SerializedObject(child);
-			SerializedProperty prop = serialized.GetIterator();
-			prop.NextVisible(true);
-
-			while (prop.NextVisible(recurse))
+			while (nextFunc(recurse))
 			{
-				if (_ignoredPropertyNames.Contains(prop.name) == false)
+				if (IgnoredPropertyNames.Contains(prop.name) == false || !showHidden)
 				{
 					EditorGUILayout.PropertyField(prop);
 				}
@@ -61,12 +68,21 @@ namespace cmdwtf.UnityTools.Editor
 
 			prop.Reset();
 
-			serialized.ApplyModifiedProperties();
+			return serialized.ApplyModifiedProperties();
 		}
 
-		protected void StartCoroutine(IEnumerator cr)
+		protected void DoChildInspector(Component child, bool recurse = true)
 		{
-			_runningCoroutines.Add(cr);
+			if (child == null)
+			{
+				return;
+			}
+
+			var serialized = new SerializedObject(child);
+
+			DoInspector(serialized, skipFirst: true, recurse);
 		}
+
+		protected void StartCoroutine(IEnumerator cr) => _runningCoroutines.Add(cr);
 	}
 }
