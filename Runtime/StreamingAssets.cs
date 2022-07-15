@@ -2,7 +2,9 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 
+#if USE_DOTNETZIP
 using Ionic.Zip;
+#endif // USE_DOTNETZIP
 
 using UnityEngine;
 using UnityEngine.Networking;
@@ -14,13 +16,14 @@ namespace cmdwtf.UnityTools
 		public static SettingsCollection Settings { get; } = new SettingsCollection();
 
 		private static string Tag => Settings.LogTag;
-		
+
 		public static DateTime GetFileModifiedTime(string path)
 		{
 			if (Application.platform == RuntimePlatform.Android)
 			{
 				try
 				{
+#if USE_DOTNETZIP
 					using (var apk = ZipFile.Read(Application.dataPath))
 					{
 						foreach (ZipEntry entry in apk.Entries)
@@ -39,7 +42,7 @@ namespace cmdwtf.UnityTools
 							}
 						}
 					}
-
+#endif // USE_DOTNETZIP
 					Debug.LogError(
 						$"{Tag}Entry not found when trying to retrieving last modified time from zip for path: {path}");
 				}
@@ -268,9 +271,9 @@ namespace cmdwtf.UnityTools
 			var found = new List<string>();
 
 			var matcher = new Wildcard(searchPattern, System.Text.RegularExpressions.RegexOptions.Compiled | System.Text.RegularExpressions.RegexOptions.IgnoreCase);
-
+#if USE_DOTNETZIP
 			using var apk = ZipFile.Read(Application.dataPath);
-			
+
 			foreach (ZipEntry entry in apk.Entries)
 			{
 				// ignore directories
@@ -304,8 +307,11 @@ namespace cmdwtf.UnityTools
 			}
 
 			return found.ToArray();
+#else
+			throw new NotSupportedException();
+#endif // USE_DOTNETZIP
 		}
-		
+
 		private static string BuildStreamingAssetsPath(string filename, string subDirectory, bool androidInZipPath)
 		{
 			string assetPath;
