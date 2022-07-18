@@ -135,16 +135,22 @@ namespace cmdwtf.UnityTools.Editor
 				}
 			}
 
+			// store our updated min/max
 			value.minimum = min;
 			value.maximum = max;
 
-			if (_popupEditedValue.HasValue)
+			// did the user edit the limits in the popup?
+			// if not, we're done.
+			if (!_popupEditedValue.HasValue)
 			{
-				value.minimumLimit = _popupEditedValue.Value.minimumLimit;
-				value.maximumLimit = _popupEditedValue.Value.maximumLimit;
-				property.boxedValue = value;
-				_popupEditedValue = null;
+				return;
 			}
+
+			// if they did, update the new limits and mark the UI as changed!
+			value.minimumLimit = _popupEditedValue.Value.minimumLimit;
+			value.maximumLimit = _popupEditedValue.Value.maximumLimit;
+			_popupEditedValue = null;
+			GUI.changed = true;
 		}
 
 		protected override int GetPropertyLineCount(SerializedProperty property, GUIContent label)
