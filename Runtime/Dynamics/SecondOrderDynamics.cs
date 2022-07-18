@@ -191,6 +191,7 @@ namespace cmdwtf.UnityTools.Dynamics
 			_state.F = settings.SampleF(in _state);
 			_state.Z = settings.SampleZ(in _state);
 			_state.R = settings.SampleR(in _state);
+			settings.SampleDeltaTimeScale(in _state);
 		}
 
 		private void RecalculateConstants()

@@ -27,6 +27,16 @@ namespace cmdwtf.UnityTools.Dynamics
 		public DynamicsVector3 dynamicsUpwards = new();
 		public DynamicsVector3 dynamicsForward = new();
 
+		/// <summary>
+		/// True to normalize the quaternion sign before applying dynamics, which
+		/// should prevent many edge cases that would cause the rotation to take the "long" way around.
+		/// </summary>
+		[Tooltip("If true, the target value will be compared to the previous value via their dot products. " +
+				 "If the result is negative, the signs of the target value will be negated, which should prevent " +
+				 "most edge cases where the rotation would take the 'long way' around. Disable this if you would " +
+				 "rather always follow the rotation exactly.")]
+		public bool normalizeSign = true;
+
 		public Quaternion Value => _value;
 		private Quaternion _value;
 
@@ -62,7 +72,8 @@ namespace cmdwtf.UnityTools.Dynamics
 			switch (rotationType)
 			{
 				case DynamicsQuaternionRotationType.QuaternionComponents:
-					UpdateQuaternion(deltaTime, target);
+					bool inverted = normalizeSign && NormalizeSign(current, ref target);
+					UpdateQuaternion(deltaTime, target, inverted);
 					break;
 				case DynamicsQuaternionRotationType.ForwardAndUpward:
 					UpdateForwardUp(deltaTime, target);
@@ -74,12 +85,41 @@ namespace cmdwtf.UnityTools.Dynamics
 			return Value;
 		}
 
-		private void UpdateQuaternion(float deltaTime, Quaternion target)
+		/// <summary>
+		/// Inverts component signs on the target quaternion if the dot product of it
+		/// and the current quaternion is less than zero.
+		/// </summary>
+		/// <param name="current">The current value.</param>
+		/// <param name="target">The target value.</param>
+		/// <returns><see langword="true" /> if the target had its signs inverted, otherwise false.</returns>
+		private bool NormalizeSign(Quaternion current, ref Quaternion target)
+		{
+			// if our dot product is positive, we don't need to invert signs.
+			if (Quaternion.Dot(current, target) >= 0)
+			{
+				return false;
+			}
+
+			// invert the signs on the components
+			target.x *= -1;
+			target.y *= -1;
+			target.z *= -1;
+			target.w *= -1;
+
+			return true;
+		}
+
+		private void UpdateQuaternion(float deltaTime, Quaternion target, bool shouldNormalizeResult)
 		{
 			_value.x = dynamicsX.Update(deltaTime, target.x);
 			_value.y = dynamicsY.Update(deltaTime, target.y);
 			_value.z = dynamicsZ.Update(deltaTime, target.z);
 			_value.w = dynamicsW.Update(deltaTime, target.w);
+
+			if (shouldNormalizeResult)
+			{
+				_value.Normalize();
+			}
 
 			// store our new q as up/fwd
 			_valueUpwards = _value * Vector3.up;

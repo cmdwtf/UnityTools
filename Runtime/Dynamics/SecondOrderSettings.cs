@@ -19,6 +19,8 @@ namespace cmdwtf.UnityTools.Dynamics
 		private const float DefaultZMaximum = 2f;
 		private const float DefaultRMinimum = -5f;
 		private const float DefaultRMaximum = 5f;
+		private const float DefaultDeltaTimeRangeMinimum = 0f;
+		private const float DefaultDeltaTimeRangeMaximum = 5f;
 
 		private const float DampingUndamped = 0;
 		private const float DampingCritical = 1;
@@ -29,10 +31,9 @@ namespace cmdwtf.UnityTools.Dynamics
 		private const float ResponsivenessAnticipate = -2;
 		private const float ResponsivenessOvershoot = 2;
 
-		private const float MaxStableValue = 1000000f;
+		private const float DeltaTimeRangeRealtime = 1f;
 
-		private const float DefaultDeltaTimeRangeMinimum = 0f;
-		private const float DefaultDeltaTimeRangeMaximum = 5f;
+		private const float MaxStableValue = 1000000f;
 
 		#endregion
 
@@ -78,7 +79,7 @@ namespace cmdwtf.UnityTools.Dynamics
 			frequency = new ValueRange(frequencyF, frequencyF, DefaultFMinimum, DefaultFMaximum);
 			damping = new ValueRange(dampingZ, dampingZ, DefaultZMinimum, DefaultZMaximum);
 			responsiveness = new ValueRange(responsivenessR, responsivenessR, DefaultRMinimum, DefaultRMaximum);
-			deltaTimeScale = new ValueRange(1f, 1f, DefaultDeltaTimeRangeMinimum, DefaultDeltaTimeRangeMaximum);
+			deltaTimeScale = new ValueRange(DeltaTimeRangeRealtime, DeltaTimeRangeRealtime, DefaultDeltaTimeRangeMinimum, DefaultDeltaTimeRangeMaximum);
 
 			// store desired modes
 			this.inputSampleMode = inputSampleMode;

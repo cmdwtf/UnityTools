@@ -34,6 +34,8 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 
 		private const string PropertyNameSettings = nameof(SecondOrderDynamics.settings);
 
+		private const string PropertyNameNormalizeSign = nameof(DynamicsQuaternion.normalizeSign);
+
 		public DynamicsQuaternionDrawer()
 		{
 			_forwardDrawer = new DynamicsVector3Drawer
@@ -132,7 +134,7 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 
 			SerializedProperty typeProperty = property.FindPropertyRelative(nameof(DynamicsQuaternion.rotationType));
 			GUIContent typeLabel = new(typeProperty.displayName, typeProperty.tooltip);
-			EditorGUI.PropertyField(position, typeProperty, typeLabel);
+			EditorGUI.PropertyField(position.EditorGUILineHeight(), typeProperty, typeLabel);
 
 			float newGraphStartY = _graphStartPosition.y +
 						 EditorGUI.GetPropertyHeight(typeProperty) +
@@ -144,9 +146,11 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 			switch (type)
 			{
 				case DynamicsQuaternionRotationType.QuaternionComponents:
+					DoQuaternionDynamicsInspector(position, property);
+					position.y += Constants.StandardLineHeight;
 					position.height = _graphStartPosition.height;
 					_renderFullGraph?.Invoke(position);
-					position.y = inspectorStartPosition.y + DisplayHeightGraphPaddingPx;
+					position.y += position.height + DisplayHeightGraphPaddingPx;
 					DoSingleQuaternionInspector(position, property);
 					break;
 				case DynamicsQuaternionRotationType.ForwardAndUpward:
@@ -167,7 +171,7 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 			float baseHeight = EditorGUIUtility.singleLineHeight + EditorGUIUtility.standardVerticalSpacing;
 
 			SerializedProperty singleDimensionProperty = property.FindPropertyRelative($"{DimensionPropertyNames[0]}.{PropertyNameSettings}");
-			float singleDimensionEditHeight = GetChildPropertyFieldsHeight(singleDimensionProperty);
+			float singleDimensionEditHeight = GetChildPropertyFieldsHeight(singleDimensionProperty) + (Constants.StandardLineHeight * 1);
 
 			_forwardPropertyHeight = _forwardDrawer.GetPropertyHeight(property, GUIContent.none);
 			_upwardsPropertyHeight = _upwardsDrawer.GetPropertyHeight(property, GUIContent.none);
@@ -176,6 +180,7 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 			{
 				DynamicsQuaternionRotationType.QuaternionComponents => baseHeight + singleDimensionEditHeight,
 				DynamicsQuaternionRotationType.ForwardAndUpward =>	_forwardPropertyHeight + _upwardsPropertyHeight +
+																	DisplayHeightGraphPaddingPx +
 																	EditorGUIUtility.standardVerticalSpacing,
 				_ => _shownPropertyHeight,
 			};
@@ -195,6 +200,10 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 			return rotationType.GetValue<DynamicsQuaternionRotationType>();
 		}
 
+		private void DoQuaternionDynamicsInspector(Rect position, SerializedProperty property)
+			=> EditorGUI.PropertyField(position.EditorGUILineHeight(),
+									   property.FindPropertyRelative(PropertyNameNormalizeSign));
+
 		private void DoSingleQuaternionInspector(Rect position, SerializedProperty property)
 		{
 			SerializedProperty propertySettingsW = property.FindPropertyRelative($"{DimensionPropertyNames[0]}.{PropertyNameSettings}");
@@ -213,15 +222,21 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 				return;
 			}
 
+			// apply the changes the user made to this object,
+			// but don't save an undo state, we'll do that later.
 			all.serializedObject.ApplyModifiedPropertiesWithoutUndo();
+
+			// get the boxed value to propagate to other properties
 			object val = all.GetValue();
 
+			// skipping 0 because we started there, find each other property and set those values,
 			for (int scan = 1; scan < DimensionPropertyNames.Length; ++scan)
 			{
 				SerializedProperty dimensionProperty = property.FindPropertyRelative($"{DimensionPropertyNames[scan]}.{PropertyNameSettings}");
 				dimensionProperty.boxedValue = val;
 			}
 
+			// apply all those updated properties as a single undo state.
 			all.serializedObject.ApplyModifiedProperties();
 		}
 	}
