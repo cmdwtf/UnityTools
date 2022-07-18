@@ -11,6 +11,10 @@ namespace cmdwtf.UnityTools.Editor
 	{
 		private static Rect? _lastRect;
 
+		/// <inheritdoc cref="GUILayoutUtility.GetLastRect"/>
+		public static Rect GetLastRect()
+			=> _lastRect ?? Rect.zero;
+
 		/// <inheritdoc cref="EditorGUI.DropdownButton(UnityEngine.Rect,UnityEngine.GUIContent,UnityEngine.FocusType)"/>
 		public static bool DropdownButtonLabeled(string label,
 												 string dropdownContent,
@@ -98,9 +102,24 @@ namespace cmdwtf.UnityTools.Editor
 		public static void DropShadowLabel(string text, GUIStyle style = default)
 			=> DropShadowLabel(new GUIContent(text), style);
 
+		public static bool InlineHamburgerMenuButton()
+		{
+			GUIStyle hamburgerStyle = new("PaneOptions")
+			{
+				padding = GUI.skin.button.padding,
+				margin = GUI.skin.button.margin,
+				alignment = TextAnchor.MiddleCenter,
+				fixedHeight = 0,
+				imagePosition = ImagePosition.ImageOnly,
+				stretchHeight = true,
+				stretchWidth = false,
+			};
 
-		/// <inheritdoc cref="GUILayoutUtility.GetLastRect"/>
-		public static Rect GetLastRect()
-			=> _lastRect ?? Rect.zero;
+			// increase the margin just a smidge so it fits inline better.
+			hamburgerStyle.margin.top++;
+			hamburgerStyle.margin.bottom++;
+
+			return GUILayout.Button(GUIContent.none, hamburgerStyle);
+		}
 	}
 }
