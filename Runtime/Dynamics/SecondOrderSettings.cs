@@ -31,7 +31,7 @@ namespace cmdwtf.UnityTools.Dynamics
 
 		private const float MaxStableValue = 1000000f;
 
-		private const float DefaultDeltaTimeRangeMinimum = 0.00001f;
+		private const float DefaultDeltaTimeRangeMinimum = 0f;
 		private const float DefaultDeltaTimeRangeMaximum = 5f;
 
 		#endregion
