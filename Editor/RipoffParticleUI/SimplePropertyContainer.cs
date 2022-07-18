@@ -7,8 +7,14 @@ using UnityEngine;
 
 namespace cmdwtf.UnityTools.Editor.RipoffParticleUI
 {
+	/// <summary>
+	/// A small container for simple properties.
+	/// </summary>
 	public sealed class SimplePropertyContainer : ISimplePropertyContainer
 	{
+		/// <summary>
+		/// A collection of data that describes a simple property.
+		/// </summary>
 		private class PropertyMeta
 		{
 			public string Name => PropertyElement.AssociatedPropertyName;
@@ -23,6 +29,9 @@ namespace cmdwtf.UnityTools.Editor.RipoffParticleUI
 			}
 		}
 
+		/// <summary>
+		/// If <see langword="true" />, should include properties that aren't visible.
+		/// </summary>
 		public bool IncludeHiddenProperties { get; set; } = false;
 
 		private readonly Dictionary<string, PropertyMeta> _simpleProperties = new();

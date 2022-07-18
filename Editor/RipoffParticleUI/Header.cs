@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections;
 
 using UnityEditor;
 
@@ -7,12 +6,24 @@ using UnityEngine;
 
 namespace cmdwtf.UnityTools.Editor.RipoffParticleUI
 {
+	/// <summary>
+	/// A section header that has an icon and optional menu button.
+	/// </summary>
 	public class Header : PropertyElement
 	{
+		/// <summary>
+		/// True to show the menu button on the header.
+		/// </summary>
 		public bool ShowMenuButton { get; set; }
 
+		/// <summary>
+		/// Raised when the menu button on the header is clicked.
+		/// </summary>
 		public event Action<Rect> MenuButtonClicked;
 
+		/// <summary>
+		/// True to enable the header drawing it's associated property directly after itself.
+		/// </summary>
 		public virtual bool ShouldDrawDirectProperty { get; set; } = false;
 
 		/// <inheritdoc />

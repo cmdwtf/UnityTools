@@ -237,10 +237,34 @@ namespace cmdwtf.UnityTools.Editor
 			{
 				DrawLabels();
 			}
+		}
 
-			// debug tesxt
-			//Rect where = _drawingPosition.EditorGUILineHeight(1, true);
-			//GUI.Label(where, _drawingPosition.ToString(), MidTimeLabelStyle);
+		public void SetAllLinesVisible(bool visible)
+		{
+			foreach (GraphLine line in _lines.Values)
+			{
+				line.Focused = visible;
+				line.Visible = visible;
+			}
+		}
+
+		public void SetLineVisible(string lineKey, bool visible)
+		{
+			if (!_lines.TryGetValue(lineKey, out GraphLine line))
+			{
+				return;
+			}
+
+			line.Focused = visible;
+			line.Visible = visible;
+		}
+
+		public void FocusLines(params string[] lineKeys)
+		{
+			foreach (KeyValuePair<string, GraphLine> kvp in _lines)
+			{
+				kvp.Value.Focused = lineKeys == null || lineKeys.Contains(kvp.Key);
+			}
 		}
 
 		#endregion
@@ -252,14 +276,6 @@ namespace cmdwtf.UnityTools.Editor
 			float valueDelta = (AllLinesMaximumValue - AllLinesMinimumValue);
 			float xResult = Mathf.Lerp(_drawingPosition.xMin, _drawingPosition.xMax, xSample);
 			float yResult = Mathf.Lerp(_drawingPosition.yMax, _drawingPosition.yMin, (ySample - AllLinesMinimumValue) / valueDelta);
-			return new Vector2(xResult, yResult);
-		}
-
-		private Vector2 SampleToFrameUIPoint(float xSample, float ySample)
-		{
-			float valueDelta = (AllLinesMaximumValue - AllLinesMinimumValue);
-			float xResult = Mathf.Lerp(_frameDrawingPosition.xMin, _frameDrawingPosition.xMax, xSample);
-			float yResult = Mathf.Lerp(_frameDrawingPosition.yMax, _frameDrawingPosition.yMin, (ySample - AllLinesMinimumValue) / valueDelta);
 			return new Vector2(xResult, yResult);
 		}
 
@@ -311,22 +327,14 @@ namespace cmdwtf.UnityTools.Editor
 		}
 
 		private void DrawFrame()
-		{
-			//var graphFullPos = new Rect(_graphTopLeft.x, _graphTopLeft.y, _frameDrawingPosition.width, _frameDrawingPosition.height);
-			EditorGUI.DrawRect(_frameDrawingPosition, FrameColor);
-		}
+			=> EditorGUI.DrawRect(_frameDrawingPosition, FrameColor);
 
 		private void DrawBackground()
-		{
-			//Rect graphFullPos = new(_drawingPosition.x, _graphTopLeft.y, _drawingPosition.width, _drawingPosition.height);
-			EditorGUI.DrawRect(_drawingPosition, BackgroundFillColor);
-		}
+			=> EditorGUI.DrawRect(_drawingPosition, BackgroundFillColor);
 
-		private void DrawGridLines()
-		{
-			// #todo - gridlines?
+		// #nyi gridlines
+		private void DrawGridLines() =>
 			GUI.Label(_drawingPosition, "Gridlines Not Yet Implemented");
-		}
 
 		private void DrawLines(bool focused)
 		{
@@ -389,31 +397,5 @@ namespace cmdwtf.UnityTools.Editor
 		}
 
 		#endregion
-
-		public void SetAllLinesVisible(bool visible)
-		{
-			foreach (GraphLine line in _lines.Values)
-			{
-				line.Focused = visible;
-				line.Visible = visible;
-			}
-		}
-
-		public void SetLineVisible(string lineKey, bool visible)
-		{
-			if (_lines.TryGetValue(lineKey, out GraphLine line))
-			{
-				line.Focused = visible;
-				line.Visible = visible;
-			}
-		}
-
-		public void FocusLines(params string[] lineKeys)
-		{
-			foreach (KeyValuePair<string, GraphLine> kvp in _lines)
-			{
-				kvp.Value.Focused = lineKeys == null || lineKeys.Contains(kvp.Key);
-			}
-		}
 	}
 }

@@ -4,11 +4,17 @@ using UnityEngine;
 
 namespace cmdwtf.UnityTools.Editor.RipoffParticleUI
 {
+	/// <summary>
+	/// A property element that represents a single, simple property.
+	/// </summary>
 	public sealed class SimpleProperty : PropertyElement
 	{
 		/// <inheritdoc />
 		public override bool IsExpanded => true;
 
+		/// <summary>
+		/// The potential modes to draw the simple property in.
+		/// </summary>
 		public enum PropertyMode
 		{
 			Single,
@@ -16,6 +22,9 @@ namespace cmdwtf.UnityTools.Editor.RipoffParticleUI
 			ChildrenOnly,
 		}
 
+		/// <summary>
+		/// The mode to draw the simple property in.
+		/// </summary>
 		public PropertyMode Mode { get; set; } = PropertyMode.Single;
 
 		private readonly string _propertyName;

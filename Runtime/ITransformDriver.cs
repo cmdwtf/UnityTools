@@ -6,6 +6,9 @@
 	public interface ITransformDriver
 		: ITransformPositionDriver, ITransformRotationDriver, ITransformScaleDriver
 	{
+		/// <summary>
+		/// Returns true if the object is driving any component of a transform's.
+		/// </summary>
 		bool IsDrivingAnyTransformComponent { get; }
 	}
 }

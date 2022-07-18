@@ -4,6 +4,10 @@ using UnityEngine;
 
 namespace cmdwtf.UnityTools.Editor.RipoffParticleUI
 {
+	/// <summary>
+	/// Styles used by the <see cref="RipoffParticleUI"/> classes.
+	/// Many values and names borrowed from Unity's "Shuriken" UI bits.
+	/// </summary>
 	public class Style
 	{
 		public const float HeaderHeightPx = 25f;
@@ -65,7 +69,6 @@ namespace cmdwtf.UnityTools.Editor.RipoffParticleUI
 			toolbarButtonLeftAlignText = "ToolbarButton";
 			modulePadding = new() {padding = new RectOffset(3, 3, 4, 2),};
 			customDataWindow = new(GUI.skin.window) {font = EditorStyles.miniFont};
-
 		}
 	}
 }

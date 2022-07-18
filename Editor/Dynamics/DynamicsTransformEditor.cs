@@ -69,7 +69,6 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 			return ui;
 		}
 
-		//private static string DynamicsTransformStateToHeaderText(bool drivingPos, bool drivingRot, bool drivingSca)
 		private static string DynamicsTransformStateToHeaderText(DynamicsTransform dt)
 		{
 			if (!dt.IsDrivingAnyTransformComponent)

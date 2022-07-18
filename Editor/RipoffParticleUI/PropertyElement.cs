@@ -6,9 +6,17 @@ using UnityEngine;
 
 namespace cmdwtf.UnityTools.Editor.RipoffParticleUI
 {
+	/// <summary>
+	/// An element that represents one or more properties.
+	/// </summary>
 	public class PropertyElement : Element, ISimplePropertyContainer
 	{
 		private bool _isExpandedFallback = true;
+
+		/// <summary>
+		/// Attaches the <see cref="IsExpanded"/> value to the expanded state
+		/// of the associated property.
+		/// </summary>
 		public override bool IsExpanded
 		{
 			get => AssociatedProperty?.isExpanded ?? _isExpandedFallback;
@@ -23,8 +31,14 @@ namespace cmdwtf.UnityTools.Editor.RipoffParticleUI
 			}
 		}
 
+		/// <summary>
+		/// The name of the property this element is associated with.
+		/// </summary>
 		public string AssociatedPropertyName { get; private set; }
 
+		/// <summary>
+		/// The property this element is associated with.
+		/// </summary>
 		public SerializedProperty AssociatedProperty { get; private set; }
 
 		// disable the default constructor, we need a property name!
@@ -84,6 +98,9 @@ namespace cmdwtf.UnityTools.Editor.RipoffParticleUI
 
 		#endregion
 
+		/// <summary>
+		/// A container to hold the properties of this element.
+		/// </summary>
 		public SimplePropertyContainer SimpleProperties { get; private set; } = new();
 
 		#region ISimplePropertyContainer Delegation

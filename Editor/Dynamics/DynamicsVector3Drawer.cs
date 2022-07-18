@@ -32,15 +32,6 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 
 		#region Overrides of DynamicsTransformComponentDrawer
 
-		/// <inheritdoc />
-		//protected override float HeightDivisor { get; } = 3.0f;
-
-		/// <inheritdoc />
-		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
-		{
-			base.OnGUI(position, property, label);
-		}
-
 		protected override void OnUpdateLines(IMultidimensionalDynamicsProvider mdDynamics)
 		{
 			if (mdDynamics is not DynamicsVector3 dv3)

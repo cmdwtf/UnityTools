@@ -8,18 +8,35 @@ using Random = System.Random;
 
 namespace cmdwtf.UnityTools.Editor.RipoffParticleUI
 {
+	/// <summary>
+	/// A smaller header with an optional checkbox.
+	/// </summary>
 	public class SubHeader : Header
 	{
+		/// <summary>
+		/// True to show the checkbox on the subheader.
+		/// </summary>
 		public bool ShowCheckbox { get; set; } = true;
 
+		/// <summary>
+		/// Raised when the checkbox is clicked.
+		/// </summary>
 		public event Action<SubHeader> CheckboxClicked;
 
+		/// <summary>
+		/// If true and the <see cref="CheckboxSubPropertyName"/> doesn't refer to a
+		/// valid property, will show the checkbox in the checked state.
+		/// </summary>
 		public bool FallbackChecked { get; set; } = false;
 
+		/// <summary>
+		/// The serialized property name of a boolean property that is associated with the checkbox on the header.
+		/// </summary>
 		public string CheckboxSubPropertyName { get; set; }
 
 		private SerializedProperty _checkboxProperty;
 
+		/// <inheritdoc />
 		public override bool ShouldDrawDirectProperty { get; set; } = true;
 
 		/// <inheritdoc />
@@ -100,9 +117,7 @@ namespace cmdwtf.UnityTools.Editor.RipoffParticleUI
 
 		/// <inheritdoc />
 		protected override void OnAfterDraw(Context context)
-		{
-			_checkboxProperty = null;
-		}
+			=> _checkboxProperty = null;
 
 		#endregion
 
