@@ -170,5 +170,17 @@ namespace cmdwtf.UnityTools
 
 		public static Vector3 RandomVector(float min, float max)
 			=> new Vector3(Random.Range(min, max), Random.Range(min, max), Random.Range(min, max));
+
+		public static float Remap(float inMin, float inMax, float outMin, float outMax, float value)
+		{
+			float inT = Mathf.InverseLerp(inMin, inMax, value);
+			return Mathf.Lerp(outMin, outMax, inT);
+		}
+
+		public static float RemapUnclamped(float inMin, float inMax, float outMin, float outMax, float value)
+		{
+			float inT = Mathf.InverseLerp(inMin, inMax, value);
+			return Mathf.LerpUnclamped(outMin, outMax, inT);
+		}
 	}
 }
