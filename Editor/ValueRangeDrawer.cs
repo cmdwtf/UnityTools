@@ -38,12 +38,25 @@ namespace cmdwtf.UnityTools.Editor
 				DrawMinMaxSlider(position, property, label, ref value);
 			}
 
-			if (GUI.enabled && EditorGUI.EndChangeCheck())
+			if (EditorGUI.EndChangeCheck() && GUI.enabled)
 			{
-				property.boxedValue = value;
+				UpdatePropertyFromValue(position, label, property, ref value);
 			}
 
 			GUI.enabled = true;
+		}
+
+		private void UpdatePropertyFromValue(Rect position, GUIContent label, SerializedProperty property, ref ValueRange value)
+		{
+			EditorGUI.BeginProperty(position, label, property);
+			SerializedProperty range = property.FindPropertyRelative(nameof(ValueRange.range));
+			SerializedProperty limit = property.FindPropertyRelative(nameof(ValueRange.limit));
+			SerializedProperty ffv = property.FindPropertyRelative(nameof(ValueRange._forceFixedValue));
+
+			range.vector2Value = value.range;
+			limit.vector2Value = value.limit;
+			ffv.boolValue = value._forceFixedValue;
+			EditorGUI.EndProperty();
 		}
 
 		private void DrawSimpleSlider(Rect position, SerializedProperty property, GUIContent label, ref ValueRange value)

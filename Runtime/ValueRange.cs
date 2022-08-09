@@ -19,10 +19,13 @@ namespace cmdwtf.UnityTools
 		#region Serialized Fields
 
 		[SerializeField]
-		private Vector2 range;
+		internal Vector2 range;
 
 		[SerializeField]
-		private Vector2 limit;
+		internal Vector2 limit;
+
+		[SerializeField]
+		internal bool _forceFixedValue;
 
 		#endregion
 
@@ -157,8 +160,6 @@ namespace cmdwtf.UnityTools
 			=> Mathf.Approximately(minimumLimit, maximumLimit) &&
 			   Mathf.Approximately(minimum, maximum) &&
 			   Mathf.Approximately(minimumLimit, minimum);
-
-		private bool _forceFixedValue;
 
 		/// <summary>
 		/// <see langword="true"/> if the range is enforcing that only a fixed value can be used.
