@@ -20,8 +20,6 @@ namespace cmdwtf.UnityTools.Editor
 		{
 			var value = property.GetValue<ValueRange>();
 
-			GUI.enabled = property.editable;
-
 			EditorGUI.BeginChangeCheck();
 
 			if (value.forceFixedValue)
@@ -42,8 +40,6 @@ namespace cmdwtf.UnityTools.Editor
 			{
 				UpdatePropertyFromValue(position, label, property, ref value);
 			}
-
-			GUI.enabled = true;
 		}
 
 		private void UpdatePropertyFromValue(Rect position, GUIContent label, SerializedProperty property, ref ValueRange value)
