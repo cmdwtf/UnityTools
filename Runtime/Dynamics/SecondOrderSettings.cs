@@ -9,31 +9,31 @@ namespace cmdwtf.UnityTools.Dynamics
 	/// #todo: expose to external assemblies
 	/// </summary>
 	[Serializable]
-	internal class SecondOrderSettings
+	internal struct SecondOrderSettings
 	{
 		#region Private Constants
 
-		private const float DefaultFMinimum = 0f;
-		private const float DefaultFMaximum = 20f;
-		private const float DefaultZMinimum = 0f;
-		private const float DefaultZMaximum = 2f;
-		private const float DefaultRMinimum = -5f;
-		private const float DefaultRMaximum = 5f;
-		private const float DefaultDeltaTimeRangeMinimum = 0f;
-		private const float DefaultDeltaTimeRangeMaximum = 5f;
+		internal const float DefaultFMinimum = 0f;
+		internal const float DefaultFMaximum = 20f;
+		internal const float DefaultZMinimum = 0f;
+		internal const float DefaultZMaximum = 2f;
+		internal const float DefaultRMinimum = -5f;
+		internal const float DefaultRMaximum = 5f;
+		internal const float DefaultDeltaTimeRangeMinimum = 0f;
+		internal const float DefaultDeltaTimeRangeMaximum = 5f;
 
-		private const float DampingUndamped = 0;
-		private const float DampingCritical = 1;
-		private const float DampingSmooth = DampingCritical;
+		internal const float DampingUndamped = 0;
+		internal const float DampingCritical = 1;
+		internal const float DampingSmooth = DampingCritical;
 
-		private const float ResponsivenessSlow = 0;
-		private const float ResponsivenessNatural = 1;
-		private const float ResponsivenessAnticipate = -2;
-		private const float ResponsivenessOvershoot = 2;
+		internal const float ResponsivenessSlow = 0;
+		internal const float ResponsivenessNatural = 1;
+		internal const float ResponsivenessAnticipate = -2;
+		internal const float ResponsivenessOvershoot = 2;
 
-		private const float DeltaTimeRangeRealtime = 1f;
+		internal const float DeltaTimeRangeRealtime = 1f;
 
-		private const float MaxStableValue = 1000000f;
+		internal const float MaxStableValue = 1000000f;
 
 		#endregion
 

@@ -5,7 +5,6 @@ using cmdwtf.UnityTools.Dynamics;
 using UnityEditor;
 
 using UnityEngine;
-using UnityEngine.UIElements;
 
 namespace cmdwtf.UnityTools.Editor.Dynamics
 {
@@ -54,6 +53,7 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 
 		#region Overrides of DynamicsTransformComponentDrawer
 
+		/// <inheritdoc />
 		protected override void OnUpdateLines(IMultidimensionalDynamicsProvider mdDynamics)
 		{
 			if (mdDynamics is not DynamicsQuaternion dq)
@@ -76,6 +76,7 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 			}
 		}
 
+		/// <inheritdoc />
 		protected override void OnRenderGraph(Rect position, IMultidimensionalDynamicsProvider mdDynamics, bool isExpanded)
 		{
 			if (mdDynamics is not DynamicsQuaternion dq)
@@ -92,14 +93,14 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 					// don't render the graph now -- it's delayed until after we render the mode.
 					_renderFullGraph = r =>
 					{
-						Renderer.SetAllLinesVisible(true);
-						Renderer.Render(r, GUIContent.none, isExpanded: true);
+						_renderer.SetAllLinesVisible(true);
+						_renderer.Render(r, GUIContent.none, isExpanded: true);
 					};
 				}
 				else
 				{
-					Renderer.SetAllLinesVisible(true);
-					Renderer.Render(position, "Rotation", isExpanded: false);
+					_renderer.SetAllLinesVisible(true);
+					_renderer.Render(position, "Rotation", isExpanded: false);
 				}
 			}
 			else if (dq.rotationType == DynamicsQuaternionRotationType.ForwardAndUpward)
@@ -127,6 +128,7 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 			}
 		}
 
+		/// <inheritdoc />
 		protected override void OnRenderInspector(Rect position, SerializedProperty property)
 		{
 			Rect inspectorStartPosition = position;
@@ -164,6 +166,7 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 			}
 		}
 
+		/// <inheritdoc />
 		protected override float OnGetShownPropertyHeight(SerializedProperty property)
 		{
 			DynamicsQuaternionRotationType type = GetRotationType(property);
@@ -190,6 +193,43 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 										: 0f;
 
 			return _shownPropertyHeight;
+		}
+
+		/// <inheritdoc />
+		protected override void OnApplyPreset(IDynamicsPreset preset)
+		{
+			if (preset is not SecondOrderDynamicsPreset sodPreset)
+			{
+				return;
+			}
+
+			if (_currentDynamics is not DynamicsQuaternion dq)
+			{
+				return;
+			}
+
+			DynamicsQuaternionRotationType type = GetRotationType(_currentProperty);
+			switch (type)
+			{
+				case DynamicsQuaternionRotationType.QuaternionComponents:
+					dq.dynamicsX.ApplyPreset(sodPreset);
+					dq.dynamicsY.ApplyPreset(sodPreset);
+					dq.dynamicsZ.ApplyPreset(sodPreset);
+					dq.dynamicsW.ApplyPreset(sodPreset);
+					break;
+				case DynamicsQuaternionRotationType.ForwardAndUpward:
+					dq.dynamicsForward.dynamicsX.ApplyPreset(sodPreset);
+					dq.dynamicsForward.dynamicsY.ApplyPreset(sodPreset);
+					dq.dynamicsForward.dynamicsZ.ApplyPreset(sodPreset);
+					dq.dynamicsUpwards.dynamicsX.ApplyPreset(sodPreset);
+					dq.dynamicsUpwards.dynamicsY.ApplyPreset(sodPreset);
+					dq.dynamicsUpwards.dynamicsZ.ApplyPreset(sodPreset);
+					break;
+				default:
+					throw new ArgumentOutOfRangeException();
+			}
+
+			_currentProperty.serializedObject.ApplyModifiedProperties();
 		}
 
 		#endregion
@@ -222,9 +262,11 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 				return;
 			}
 
-			// apply the changes the user made to this object,
-			// but don't save an undo state, we'll do that later.
-			all.serializedObject.ApplyModifiedPropertiesWithoutUndo();
+			// apply the changes the user made to this object
+			all.serializedObject.ApplyModifiedProperties();
+
+			// update the serialized version so we can get the fresh value
+			all.serializedObject.Update();
 
 			// get the boxed value to propagate to other properties
 			object val = all.GetValue();
@@ -233,11 +275,10 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 			for (int scan = 1; scan < DimensionPropertyNames.Length; ++scan)
 			{
 				SerializedProperty dimensionProperty = property.FindPropertyRelative($"{DimensionPropertyNames[scan]}.{PropertyNameSettings}");
-				dimensionProperty.boxedValue = val;
+				dimensionProperty.SetValueNoUndoRecord(val);
 			}
 
-			// apply all those updated properties as a single undo state.
-			all.serializedObject.ApplyModifiedProperties();
+			property.serializedObject.Update();
 		}
 	}
 }

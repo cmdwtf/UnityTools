@@ -4,7 +4,7 @@
 	{
 #if UNITY_EDITOR
 		/// <summary>
-		/// Causes the system to store a backup of it's state so that it can be
+		/// Causes the system to store a backup of its state so that it can be
 		/// used with a different state for a simulation.
 		/// </summary>
 		void PushState();
@@ -14,6 +14,17 @@
 		/// </summary>
 		/// <returns>True, if the state was restored.</returns>
 		bool PopState();
+
+		/// <summary>
+		/// Applies settings from the given preset value.
+		/// </summary>
+		/// <param name="preset">The preset settings to apply.</param>
+		void SetTemporarySettings(IDynamicsPreset preset);
+
+		/// <summary>
+		/// Clears any set temporary settings.
+		/// </summary>
+		void ClearTemporarySettings();
 
 		/// <summary>
 		/// Resets the system with a new IV, but doesn't store it as original iv.

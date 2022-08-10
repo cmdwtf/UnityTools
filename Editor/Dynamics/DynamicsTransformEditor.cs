@@ -22,11 +22,7 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 
 			_ui = BuildUI();
 
-			EditorGUI.BeginChangeCheck();
-
-			_ui.Draw(serializedObject);
-
-			if (EditorGUI.EndChangeCheck())
+			if (_ui.Draw(serializedObject))
 			{
 				serializedObject.ApplyModifiedProperties();
 			}

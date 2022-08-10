@@ -18,7 +18,9 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 
 		private static readonly Color DisabledLineColor = Color.gray;
 
-		private protected readonly DynamicsGraphRenderer Renderer;
+		private protected readonly DynamicsGraphRenderer _renderer;
+		private protected SerializedProperty _currentProperty;
+		private protected IMultidimensionalDynamicsProvider _currentDynamics;
 
 		protected float GraphHeightMultiplier { get; set; } = 1f;
 		internal int LineColorIndexOffset { get; set; } = 0;
@@ -31,11 +33,11 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 
 		private string _rootPropertyName;
 
-		protected Style _styles;
+		private protected Style _styles;
 
 		public DynamicsTransformComponentDrawer()
 		{
-			Renderer = new DynamicsGraphRenderer();
+			_renderer = new DynamicsGraphRenderer();
 		}
 
 		public override void OnGUI(Rect position, SerializedProperty property, GUIContent label)
@@ -51,20 +53,23 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 
 			_rootPropertyName = ObjectNames.NicifyVariableName(propSplits[0]);
 
-			IMultidimensionalDynamicsProvider mdDynamics = property.GetValue<IMultidimensionalDynamicsProvider>();
+			property.serializedObject.Update();
 
-			if (mdDynamics != null)
+			_currentProperty = property;
+			_currentDynamics = property.GetValue<IMultidimensionalDynamicsProvider>();
+
+			if (_currentDynamics != null)
 			{
-				OnUpdateLines(mdDynamics);
+				OnUpdateLines(_currentDynamics);
 			}
 			else
 			{
-				EditorGUI.HelpBox(position.EditorGUILineHeight(), $"Unhandled IDynamicsTransform type: {mdDynamics.GetType().FullName}", MessageType.Warning);
+				EditorGUI.HelpBox(position.EditorGUILineHeight(), $"Unhandled IDynamicsTransform type: {_currentDynamics?.GetType().FullName}", MessageType.Warning);
 			}
 
-			// the foldout
-			//property.isExpanded = EditorGUI.Foldout(position.EditorGUILineHeight(), property.isExpanded, GUIContent.none);
-			if (EditorGUI.DropdownButton(position.CollapseToRight(Style.DropdownToggleSquarePx), GUIContent.none,
+			Rect propertyFoldoutRect = position.CollapseToRight(Style.DropdownToggleSquarePx).EditorGUILineHeight();
+
+			if (EditorGUI.DropdownButton(propertyFoldoutRect, GUIContent.none,
 										 FocusType.Keyboard, _styles.minMaxCurveStateDropDown))
 			{
 				property.isExpanded = !property.isExpanded;
@@ -77,11 +82,26 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 			position = position.EditorGUILineHeight(graphLines);
 			position.width -= (Style.DropdownToggleSquarePx + Style.DropdownTogglePaddingPx);
 
-			OnRenderGraph(position, mdDynamics, property.isExpanded);
+			if (Event.current.type == EventType.Repaint)
+			{
+				OnRenderGraph(position, _currentDynamics, property.isExpanded);
+			}
 
 			if (!property.isExpanded)
 			{
 				return;
+			}
+
+			Rect presetButtonRect = propertyFoldoutRect;
+			presetButtonRect.EditorGUINextLine();
+
+			if (property.isExpanded &&
+				GUI.Button(presetButtonRect.EditorGUILineHeight(), _styles.presetIcon, _styles.presetButton))
+			{
+				DynamicsTransformComponentPresetsPopup popup = new(_currentDynamics?.GetDynamicsSystemForDimension(0));
+				popup.PresetSelected += OnApplyPreset;
+
+				PopupWindow.Show(presetButtonRect, popup);
 			}
 
 			position.y += position.height + DisplayHeightGraphPaddingPx + EditorGUIUtility.standardVerticalSpacing;
@@ -95,13 +115,14 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 		protected abstract void OnRenderGraph(Rect position, IMultidimensionalDynamicsProvider mdDynamics, bool isExpanded);
 		protected abstract void OnRenderInspector(Rect position, SerializedProperty property);
 		protected abstract float OnGetShownPropertyHeight(SerializedProperty property);
+		protected abstract void OnApplyPreset(IDynamicsPreset preset);
 
 		protected void UpdateLine(ISimulatableDynamicsSystem simmable, bool enabled, int lineIndex)
 		{
 			DynamicsSimulationConfig config = new(simmable);
 			string lineKey = CreateLineKey(lineIndex);
 			Color lineColor = enabled ? GetLineColor(lineIndex + LineColorIndexOffset) : DisabledLineColor;
-			Renderer.UpdateDynamicsLine(config, lineKey, lineColor);
+			_renderer.UpdateDynamicsLine(config, lineKey, lineColor);
 		}
 
 		protected string CreateLineKey(int lineIndex) => $"{_rootPropertyName}.{lineIndex}";

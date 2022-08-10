@@ -46,6 +46,9 @@ namespace cmdwtf.UnityTools.Editor.RipoffParticleUI
 		public GUIStyle modulePadding;
 		public GUIStyle customDataWindow;
 
+		public GUIStyle presetButton;
+		public GUIContent presetIcon;
+
 		public Style()
 		{
 			label = "ShurikenLabel";
@@ -69,6 +72,16 @@ namespace cmdwtf.UnityTools.Editor.RipoffParticleUI
 			toolbarButtonLeftAlignText = "ToolbarButton";
 			modulePadding = new() {padding = new RectOffset(3, 3, 4, 2),};
 			customDataWindow = new(GUI.skin.window) {font = EditorStyles.miniFont};
+
+			presetButton = new(EditorStyles.iconButton)
+			{
+				fixedHeight = minMaxCurveStateDropDown.fixedHeight,
+				fixedWidth = minMaxCurveStateDropDown.fixedWidth,
+				//padding = minMaxCurveStateDropDown.padding,
+				border = minMaxCurveStateDropDown.border,
+			};
+			presetIcon = EditorGUIUtility.IconContent("Preset.Context");
+			presetIcon.tooltip = "Presets";
 		}
 	}
 }

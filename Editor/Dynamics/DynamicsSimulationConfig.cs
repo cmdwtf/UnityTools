@@ -12,6 +12,8 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 		public float DurationSeconds { get; }
 		public float StepDeltaTime => DurationSeconds / SampleCount;
 
+		public SecondOrderDynamicsPreset? OverridePreset { get; }
+
 		private const float DefaultSimulationOriginValue = 0.0f;
 		private const float DefaultSimulationOriginTime = 0.0f;
 
@@ -25,7 +27,8 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 										float originValue = DefaultSimulationOriginValue,
 										float durationSecondsSeconds = DefaultSimulationSeconds,
 										float targetValue = DefaultSimulationTarget,
-										int sampleCount = DefaultSampleCount)
+										int sampleCount = DefaultSampleCount,
+										SecondOrderDynamicsPreset? overridePreset = null)
 		{
 			Dynamics = dynamics;
 			OriginSeconds = originTimeSeconds;
@@ -33,6 +36,7 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 			SampleCount = sampleCount;
 			TargetValue = targetValue;
 			DurationSeconds = durationSecondsSeconds;
+			OverridePreset = overridePreset;
 		}
 	}
 }

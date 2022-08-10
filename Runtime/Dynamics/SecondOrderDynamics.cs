@@ -211,7 +211,7 @@ namespace cmdwtf.UnityTools.Dynamics
 			_state.CurrentVelocity = newYd;
 			_state.DeltaTime = 0;
 			_state.ElapsedTime = 0;
-			ResampleUserInputs();
+			RecalculateConstants();
 		}
 
 		private bool ValidateSolver()
@@ -230,6 +230,15 @@ namespace cmdwtf.UnityTools.Dynamics
 
 			Debug.LogError($"Unable to satisfy solver for strategy: {settings.solvingStrategy}");
 			return false;
+		}
+
+		internal void ApplyPreset(SecondOrderDynamicsPreset preset)
+		{
+			settings.frequency = preset.Frequency;
+			settings.damping = preset.Damping;
+			settings.responsiveness = preset.Responsiveness;
+			settings.deltaTimeScale = preset.DeltaTimeScale;
+			RecalculateConstants();
 		}
 
 		#region Overrides of Object
@@ -260,12 +269,49 @@ namespace cmdwtf.UnityTools.Dynamics
 #if UNITY_EDITOR
 
 		private Stack<SecondOrderState> _simStack = new();
+		private string _serializedSettings = null;
 
 		/// <inheritdoc />
 		void ISimulatableDynamicsSystem.PushState() => _simStack.Push(_state);
 
 		/// <inheritdoc />
 		bool ISimulatableDynamicsSystem.PopState() => _simStack.TryPop(out _state);
+
+		/// <inheritdoc />
+		void ISimulatableDynamicsSystem.SetTemporarySettings(IDynamicsPreset preset)
+		{
+			if (preset is not SecondOrderDynamicsPreset sodp)
+			{
+				Debug.LogWarning($"Preset provided wasn't of type {nameof(SecondOrderDynamicsPreset)}");
+				return;
+			}
+
+			if (!string.IsNullOrEmpty(_serializedSettings))
+			{
+				Debug.LogWarning("Attempted to set temporary settings while they were already set.");
+				return;
+			}
+
+			_serializedSettings = JsonUtility.ToJson(settings);
+
+			ApplyPreset(sodp);
+		}
+
+
+		/// <inheritdoc />
+		void ISimulatableDynamicsSystem.ClearTemporarySettings()
+		{
+			if (string.IsNullOrEmpty(_serializedSettings))
+			{
+				Debug.LogWarning("Attempted to clear temporary settings while they were not set.");
+				return;
+			}
+
+			settings = JsonUtility.FromJson<SecondOrderSettings>(_serializedSettings);
+			_serializedSettings = null;
+
+			RecalculateConstants();
+		}
 
 		/// <inheritdoc />
 		float ISimulatableDynamicsSystem.UpdateSim(float deltaTime, float v) => Update(deltaTime, v, null);

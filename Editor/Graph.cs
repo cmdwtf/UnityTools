@@ -22,8 +22,8 @@ namespace cmdwtf.UnityTools.Editor
 		internal static readonly Color DefaultAxisColor = Color.white;
 
 		private const float DefaultFrameThicknessPx = 1f;
-		private const float DefaultLineThickness = 0f;
-		private const float DefaultLineFocusedThickness = 1f;
+		private const float DefaultLineThickness = 1f;
+		private const float DefaultLineFocusedThickness = 2f;
 
 		private static readonly int DisplayAxisLabelHeightPx = (int)EditorGUIUtility.singleLineHeight;
 		private const int DisplayAxisLabelWidthPx = 64;
@@ -140,10 +140,21 @@ namespace cmdwtf.UnityTools.Editor
 		}
 
 
+		public IEnumerable<T> GetLineUserData<T>()
+		{
+			foreach (GraphLine line in _lines.Values)
+			{
+				if (line.UserData is T data)
+				{
+					yield return data;
+				}
+			}
+		}
+
 		public T GetLineUserData<T>(string lineKey)
 			=> _lines.TryGetValue(lineKey, out GraphLine line)
-				? (T)line.UserData
-				: default;
+				   ? (T)line.UserData
+				   : default;
 
 		public void UpdateLine(string lineKey, float[] ySamples, Color? lineColor = null, object userData = null)
 		{
@@ -160,7 +171,6 @@ namespace cmdwtf.UnityTools.Editor
 			line.SampleMinimum = Mathf.Min(_logicalDimensions.MinimumY, Mathf.Min(ySamples));
 			line.SampleMaximum = Mathf.Max(_logicalDimensions.MaximumY, Mathf.Max(ySamples));
 
-
 			// copy the samples to the line data, we will process them next time we layout.
 			line.OriginalSamples = new float[ySamples.Length];
 			Array.Copy(ySamples, line.OriginalSamples, ySamples.Length);
@@ -174,7 +184,12 @@ namespace cmdwtf.UnityTools.Editor
 
 		public bool RemoveLine(string lineKey) => _lines.Remove(lineKey);
 
-		public void Draw(Rect position)
+		public IEnumerable<Vector3> GetLineUIPoints(string lineKey)
+			=> _lines.ContainsKey(lineKey) == false
+				   ? null
+				   : _lines[lineKey].UIPoints;
+
+		public void UpdateDrawingRect(Rect position)
 		{
 			// see if our position changed requiring a new layout.
 			if (_frameDrawingPosition != position)
@@ -189,6 +204,11 @@ namespace cmdwtf.UnityTools.Editor
 			{
 				PerformLayout();
 			}
+		}
+
+		public void Draw(Rect position)
+		{
+			UpdateDrawingRect(position);
 
 			Handles.BeginGUI();
 
@@ -252,6 +272,7 @@ namespace cmdwtf.UnityTools.Editor
 		{
 			if (!_lines.TryGetValue(lineKey, out GraphLine line))
 			{
+				Debug.LogWarning($"Line for key {lineKey} wasn't found to set visible: {visible}");
 				return;
 			}
 
@@ -261,6 +282,11 @@ namespace cmdwtf.UnityTools.Editor
 
 		public void FocusLines(params string[] lineKeys)
 		{
+			if (lineKeys.Length == 1 && lineKeys[0] == null)
+			{
+				lineKeys = null;
+			}
+
 			foreach (KeyValuePair<string, GraphLine> kvp in _lines)
 			{
 				kvp.Value.Focused = lineKeys == null || lineKeys.Contains(kvp.Key);
@@ -353,13 +379,13 @@ namespace cmdwtf.UnityTools.Editor
 
 				float alpha = line.Focused ? 1f : 0.5f;
 				Handles.color = line.Color.WithAlpha(alpha);
+				float thickness = focused ? LineFocusedThickness : LineThickness;
 
-				for (int scan = 1; scan < line.UIPoints.Length; ++scan)
-				{
-					Vector3 lineBegin = line.UIPoints[scan - 1];
-					Vector3 lineEnd = line.UIPoints[scan];
-					Handles.DrawLine(lineBegin, lineEnd, focused ? LineFocusedThickness : LineThickness);
-				}
+#if UNITY_2020_3_OR_NEWER
+				Handles.DrawAAPolyLine(thickness, line.UIPoints);
+#else
+				Handles.DrawPolyLine(line.UIPoints)
+#endif // UNITY_2020_3_OR_NEWER
 			}
 		}
 
@@ -367,7 +393,6 @@ namespace cmdwtf.UnityTools.Editor
 		{
 			Vector2 baseLineTextLocation = _graphBottomLeft;
 			Vector2 baseLineTextLocationRight = _graphBottomRight;
-
 
 			GUIStyle midTimeLabelStyle = new(LabelStyle) { alignment = TextAnchor.UpperCenter };
 			GUIStyle maxTimeLabelStyle = new(LabelStyle) { alignment = TextAnchor.UpperRight };

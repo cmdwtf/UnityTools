@@ -1,12 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Reflection;
 
-using cmdwtf.UnityTools.Attributes;
 using cmdwtf.UnityTools.Dynamics;
-
-using UnityEditor;
 
 using UnityEngine;
 
@@ -14,23 +9,29 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 {
 	internal class DynamicsGraphRenderer
 	{
-		private static readonly Color DefaultTargetColor = Color.yellow;
+		internal static readonly Color DefaultTargetColor = Color.yellow;
 		private static readonly Color DefaultBackgroundColor = Graph.DefaultBackgroundColor;
 		private static readonly Color DefaultFailureBackgroundColor = Constants.DarkRed;
 
-		private const string LineKeyTarget = "__internalTargetKey";
+		internal const string LineKeyTarget = "__internalTargetKey";
 
 		private readonly Graph _graphRenderer;
-
-		private string _nominalGraphSubText = string.Empty;
 
 		private readonly HashSet<LineMeta> _failedLines = new();
 
 		private class LineMeta
 		{
+			public string Key { get; set; }
 			public uint ContentHash { get; set; }
 			public StabilityState Stability { get; set; }
 			public bool IsUnstable => Stability != StabilityState.Stable;
+			public string DynamicsText { get; set; }
+			public string DeltaTimeText { get; set; }
+
+			public string ToFailureString()
+				=> Stability != StabilityState.Stable
+					   ? $" [Failure: {Stability}]"
+					   : string.Empty;
 		}
 
 		public GUIStyle LabelStyle
@@ -87,12 +88,26 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 				HorizontalAxisUnits = "s", /* horizontal is time */
 			};
 
-
 			// set the bottom graph text handler
 			_graphRenderer.GetHorizontalMidText = userData =>
-				(userData is LineMeta lineMeta && _failedLines.Contains(lineMeta)
-					 ? $" [Failure: {lineMeta.Stability}]"
-					 : _nominalGraphSubText);
+			{
+				if (userData is LineMeta lineMeta)
+				{
+					if (_failedLines.Contains(lineMeta))
+					{
+						return $"{lineMeta.ToFailureString()}; {lineMeta.DeltaTimeText}";
+					}
+
+					return $"{lineMeta.DynamicsText}; {lineMeta.DeltaTimeText}";
+				}
+
+				string dyt = GetCommonDynamicsText();
+				string dtt = GetCommonDeltaTimeText();
+
+				return string.IsNullOrWhiteSpace(dyt)
+						   ? dtt
+						   : $"{dyt}; {dtt}";
+			};
 		}
 
 		public void UpdateSimulationTargetLine(float targetValue, Color targetColor)
@@ -104,7 +119,7 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 		public bool DoesLineNeedUpdate(string lineKey, uint contentHash)
 		{
 			uint lineHash = GetLineMeta(lineKey).ContentHash;
-			return lineHash == 0 || lineHash == contentHash;
+			return lineHash == 0 || lineHash != contentHash;
 		}
 
 		public void UpdateDynamicsLine(DynamicsSimulationConfig config, string lineKey, Color? lineColor = null, uint contentHash = 0)
@@ -126,10 +141,7 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 			meta.ContentHash = contentHash;
 
 			// grab a dynamics instance and simulate it
-			(float[] values, StabilityState stability) = Simulate(config);
-			meta.Stability = stability;
-
-			_nominalGraphSubText = $"{config.Dynamics}; ΔT={config.StepDeltaTime}s";
+			float[] values = Simulate(config, meta);
 
 			// update the line on the graph,
 			_graphRenderer.UpdateLine(lineKey, values, lineColor, meta);
@@ -145,33 +157,55 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 			}
 		}
 
-		private static (float[] Result, StabilityState Stability) Simulate(DynamicsSimulationConfig config)
+		private static float[] Simulate(DynamicsSimulationConfig config, LineMeta meta)
 		{
 			float[] result = new float[config.SampleCount];
 
 			// reset state with a temporary initial value
 			config.Dynamics.PushState();
+
+			if (config.OverridePreset.HasValue)
+			{
+				config.Dynamics.SetTemporarySettings(config.OverridePreset);
+			}
+
 			config.Dynamics.ResetTemporarySim(config.OriginValue);
 
-			// we will record if the system fails at any step of the simulation
-			StabilityState stabilityState = StabilityState.Stable;
+			// reset our stability record
+			meta.Stability = StabilityState.Stable;
 
 			// simulate each sample
 			for (int scan = 0; scan < config.SampleCount; ++scan)
 			{
 				result[scan] = config.Dynamics.UpdateSim(config.StepDeltaTime, config.TargetValue);
 
+				// we will record if the system fails at any step of the simulation
 				if (!config.Dynamics.IsStable)
 				{
-					stabilityState = config.Dynamics.StabilityState;
+					meta.Stability = config.Dynamics.StabilityState;
 				}
+			}
+
+			meta.DynamicsText = $"{config.Dynamics}";
+			meta.DeltaTimeText =  $"ΔT={config.StepDeltaTime}s";
+
+			if (config.OverridePreset.HasValue)
+			{
+				config.Dynamics.ClearTemporarySettings();
 			}
 
 			// restore the state after simulating
 			config.Dynamics.PopState();
 
-			return (result, stabilityState);
+
+			return result;
 		}
+
+		internal void UpdateDrawingRect(Rect position)
+			=> _graphRenderer.UpdateDrawingRect(position);
+
+		internal IEnumerable<Vector3> GetLineUIPoints(string lineKey)
+			=> _graphRenderer.GetLineUIPoints(lineKey);
 
 		public void RenderInto(Rect position)
 		{
@@ -206,6 +240,11 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 
 		public void Render(Rect position, GUIContent label, bool isExpanded)
 		{
+			if (position.width < 0 || position.height < 0)
+			{
+				return;
+			}
+
 			if (label != GUIContent.none)
 			{
 				float textWidth = LabelStyle.CalcSize(label).x;
@@ -228,7 +267,40 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 		{
 			LineMeta currentMeta = _graphRenderer.GetLineUserData<LineMeta>(lineKey);
 
-			return currentMeta ?? new LineMeta();
+			return currentMeta ?? new LineMeta() { Key = lineKey };
+		}
+
+		private string GetCommonDynamicsText()
+		{
+			IList<string> texts;
+
+			if (_failedLines.Any())
+			{
+				texts = _failedLines.Select(lm => lm.ToFailureString()).ToList();
+			}
+			else
+			{
+				texts = _graphRenderer.GetLineUserData<LineMeta>()
+									  .Where((lm => lm.Key != LineKeyTarget))
+									  .Select(lm => lm.DynamicsText)
+									  .ToList();
+			}
+
+			return texts.Distinct().Count() == 1
+					   ? texts.First()
+					   : string.Empty;
+		}
+
+		private string GetCommonDeltaTimeText()
+		{
+			IList<string> texts = _graphRenderer.GetLineUserData<LineMeta>()
+												.Where((lm => lm.Key != LineKeyTarget))
+												.Select(lm => lm.DeltaTimeText)
+												.ToList();
+
+			return texts.Distinct().Count() == 1
+					   ? texts.First()
+					   : string.Empty;
 		}
 
 		public void SetAllLinesVisible(bool visible) => _graphRenderer.SetAllLinesVisible(visible);

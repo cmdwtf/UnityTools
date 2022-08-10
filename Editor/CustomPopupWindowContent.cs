@@ -16,6 +16,7 @@ namespace cmdwtf.UnityTools.Editor
 		public event Action<TDerived> AcceptClicked;
 
 		public GUIContent Title { get; set; } = GUIContent.none;
+		public GUIContent Close { get; set; } = EditorGUIUtility.IconContent("winbtn_win_close");
 		public GUIStyle TitleStyle { get; set; } = default;
 
 		public string CancelButtonText { get; set; }= "Cancel";
@@ -23,6 +24,8 @@ namespace cmdwtf.UnityTools.Editor
 
 		public bool ShowCancelButton { get; set; } = true;
 		public bool ShowAcceptButton { get; set; } = true;
+
+		public bool ShowCloseButton { get; set; } = true;
 
 		public float Width
 		{
@@ -42,16 +45,15 @@ namespace cmdwtf.UnityTools.Editor
 			{
 				Title = new GUIContent(title);
 			}
+
+			Close.tooltip = "Close Window";
 		}
 
 		public override void OnGUI(Rect rect)
 		{
 			EditorGUI.BeginChangeCheck();
 
-			if (Title != GUIContent.none)
-			{
-				EditorGUILayoutEx.DropShadowLabel(Title, TitleStyle);
-			}
+			DrawHeaderGUI(rect);
 
 			ShouldDrawGUI(rect);
 
@@ -69,24 +71,50 @@ namespace cmdwtf.UnityTools.Editor
 			}
 		}
 
-		private void DrawDefaultGUI(Rect rect)
+		private void DrawHeaderGUI(Rect rect)
 		{
-			if (ShowCancelButton || ShowAcceptButton)
+			if (Title == GUIContent.none)
 			{
-				EditorGUILayout.BeginHorizontal();
+				return;
+			}
 
-				if (ShowCancelButton && GUILayout.Button(CancelButtonText))
+			EditorGUILayout.BeginHorizontal();
+			EditorGUILayoutEx.DropShadowLabel(Title, TitleStyle);
+
+			if (ShowCloseButton)
+			{
+				if (GUILayout.Button(Close, EditorStyles.iconButton, GUILayout.ExpandWidth(false)))
 				{
 					OnCancelClicked();
 				}
-
-				if (ShowAcceptButton && GUILayout.Button(AcceptButtonText))
-				{
-					OnAcceptClicked();
-				}
-
-				EditorGUILayout.EndHorizontal();
 			}
+
+			EditorGUILayout.EndHorizontal();
+
+			EditorGUILayout.Space(EditorGUIUtility.standardVerticalSpacing);
+		}
+
+		private void DrawDefaultGUI(Rect rect)
+		{
+			if (!ShowCancelButton && !ShowAcceptButton)
+			{
+				return;
+			}
+			EditorGUILayout.Space(EditorGUIUtility.standardVerticalSpacing);
+
+			EditorGUILayout.BeginHorizontal();
+
+			if (ShowCancelButton && GUILayout.Button(CancelButtonText))
+			{
+				OnCancelClicked();
+			}
+
+			if (ShowAcceptButton && GUILayout.Button(AcceptButtonText))
+			{
+				OnAcceptClicked();
+			}
+
+			EditorGUILayout.EndHorizontal();
 		}
 
 		protected abstract void ShouldDrawGUI(Rect rect);

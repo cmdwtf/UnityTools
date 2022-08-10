@@ -58,8 +58,10 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 				}
 			}
 
+			uint hash = property.GetContentHash();
+
 			// we only need to simulate if the property content changed, otherwise we'll save the cycles and just draw the last data.
-			if (propertyModified || _renderer.DoesLineNeedUpdate(property.propertyPath, property.contentHash))
+			if (propertyModified || _renderer.DoesLineNeedUpdate(property.propertyPath, hash))
 			{
 				// update graph
 				DynamicsSimulationConfig config = new (dynamics);
@@ -67,7 +69,7 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 				_renderer.UpdateDynamicsLine(config,
 											 property.propertyPath,
 											 GetCustomAttribute<DynamicsLineColorAttribute>()?.color,
-											 property.contentHash);
+											 hash);
 
 			}
 

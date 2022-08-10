@@ -1,7 +1,5 @@
 ﻿using cmdwtf.UnityTools.Dynamics;
 
-using System.Linq;
-
 using UnityEditor;
 
 using UnityEngine;
@@ -13,7 +11,9 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 	{
 		private const int MaximumPropertyChoices = 3;
 		private const int AllPropertyChoiceIndex = MaximumPropertyChoices;
+
 		private int _targetProperty = AllPropertyChoiceIndex;
+
 		private string _lastSelectSubPropertyPath;
 
 		internal string DimensionNamePrefix { get; set; } = string.Empty;
@@ -32,6 +32,7 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 
 		#region Overrides of DynamicsTransformComponentDrawer
 
+		/// <inheritdoc />
 		protected override void OnUpdateLines(IMultidimensionalDynamicsProvider mdDynamics)
 		{
 			if (mdDynamics is not DynamicsVector3 dv3)
@@ -42,6 +43,7 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 			UpdateLines(dv3);
 		}
 
+		/// <inheritdoc />
 		protected override void OnRenderGraph(Rect position,
 											IMultidimensionalDynamicsProvider mdDynamics,
 											bool isExpanded
@@ -55,11 +57,42 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 			RenderGraph(position, dv3, isExpanded);
 		}
 
+		/// <inheritdoc />
 		protected override void OnRenderInspector(Rect position, SerializedProperty property)
 			=> RenderInspector(position, property);
 
+		/// <inheritdoc />
 		protected override float OnGetShownPropertyHeight(SerializedProperty property)
 			=> GetShownPropertyHeight(property);
+
+		/// <inheritdoc />
+		protected override void OnApplyPreset(IDynamicsPreset preset)
+		{
+			if (preset is not SecondOrderDynamicsPreset sodPreset)
+			{
+				return;
+			}
+
+			if (_currentDynamics is not DynamicsVector3 dv3)
+			{
+				return;
+			}
+
+			if (_targetProperty is 0 or AllPropertyChoiceIndex)
+			{
+				dv3.dynamicsX.ApplyPreset(sodPreset);
+			}
+			if (_targetProperty is 1 or AllPropertyChoiceIndex)
+			{
+				dv3.dynamicsY.ApplyPreset(sodPreset);
+			}
+			if (_targetProperty is 2 or AllPropertyChoiceIndex)
+			{
+				dv3.dynamicsZ.ApplyPreset(sodPreset);
+			}
+
+			_currentProperty.serializedObject.ApplyModifiedProperties();
+		}
 
 		#endregion
 
@@ -74,11 +107,11 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 		{
 			if (isExpanded)
 			{
-				Renderer.FocusLines(_targetProperty == AllPropertyChoiceIndex
+				_renderer.FocusLines(_targetProperty == AllPropertyChoiceIndex
 										? null
 										: CreateLineKey(_targetProperty));
 
-				Renderer.Render(position, GUIContent.none, isExpanded: true);
+				_renderer.Render(position, GUIContent.none, isExpanded: true);
 				return;
 			}
 
@@ -87,8 +120,8 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 
 			for (int scan = 0; scan < dv3.DimensionCount; ++scan)
 			{
-				Renderer.SetSingleLineVisible(CreateLineKey(scan));
-				Renderer.Render(tabRect, $"{DimensionNamePrefixShort}{DimensionNames[scan]}", isExpanded: false);
+				_renderer.SetSingleLineVisible(CreateLineKey(scan));
+				_renderer.Render(tabRect, $"{DimensionNamePrefixShort}{DimensionNames[scan]}", isExpanded: false);
 				tabRect.EditorGUINextTab(horizontalSpacer);
 			}
 		}
@@ -159,36 +192,43 @@ namespace cmdwtf.UnityTools.Editor.Dynamics
 			}
 
 			_lastSelectSubPropertyPath = choices[_targetProperty].Data;
-			SerializedProperty prop = property.FindPropertyRelative(_lastSelectSubPropertyPath);
+			SerializedProperty selectedSubProperty = property.FindPropertyRelative(_lastSelectSubPropertyPath);
 
 			// if we are doing 'all' dimensions, we'll the X
 			// dimension to set all of them on changes.
 			SerializedProperty all = null;
 			if (_targetProperty == AllPropertyChoiceIndex)
 			{
-				all = prop.Copy();
+				all = selectedSubProperty.Copy();
 				EditorGUI.BeginChangeCheck();
 			}
 
 			// draw the dimension's inspector
-			OnGUIChildren(position, prop);
+			OnGUIChildren(position, selectedSubProperty);
 
-			// again, if we're doing all dimensions, we need to handle it:
-			// first, apply the changes that were made,
-			// then, update the other properties, which in this case will be Y and Z.
-			if (all != null && EditorGUI.EndChangeCheck())
+			// if we're not doing all dimensions, we're done
+			if (all == null || !EditorGUI.EndChangeCheck())
 			{
-				all.serializedObject.ApplyModifiedPropertiesWithoutUndo();
-				object val = all.GetValue();
-
-				for (int scan = 1; scan < DimensionNames.Length; ++scan)
-				{
-					SerializedProperty dimensionProperty = property.FindPropertyRelative(choices[scan].Data);
-					dimensionProperty.boxedValue = val;
-				}
-
-				all.serializedObject.ApplyModifiedProperties();
+				return;
 			}
+
+			// apply the changes the user made to this object
+			all.serializedObject.ApplyModifiedProperties();
+
+			// update the serialized version so we can get the fresh value
+			all.serializedObject.Update();
+
+			// get the boxed value to propagate to other properties
+			object val = all.GetValue();
+
+			// skipping 0 because we started there, find each other property and set those values,
+			for (int scan = 1; scan < DimensionNames.Length; ++scan)
+			{
+				SerializedProperty dimensionProperty = property.FindPropertyRelative(choices[scan].Data);
+				dimensionProperty.SetValueNoUndoRecord(val);
+			}
+
+			property.serializedObject.Update();
 		}
 
 		internal float GetShownPropertyHeight(SerializedProperty property)
