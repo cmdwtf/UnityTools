@@ -4,7 +4,6 @@ using System.Linq;
 using UnityEditor;
 
 using UnityEngine;
-using UnityEngine.UI;
 
 namespace cmdwtf.UnityTools.Editor
 {
