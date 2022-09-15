@@ -1,3 +1,5 @@
+using System.Reflection;
+
 using UnityEngine;
 
 namespace cmdwtf.UnityTools
@@ -24,5 +26,18 @@ namespace cmdwtf.UnityTools
 			var go = new GameObject(name, typeof(T));
 			return go.GetComponent<T>();
 		}
+
+		/// <summary>
+		/// Attempts to call the internal method on <see cref="Material"/> `GetDefaultMaterial`.
+		/// </summary>
+		/// <returns>The default material, if it exists.</returns>
+		public static Material GetDefaultMaterial()
+		{
+			const BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Static;
+			return typeof(Material)
+				   .GetMethod("GetDefaultMaterial", flags)
+				   ?.Invoke(null, null) as Material;
+		}
+
 	}
 }
