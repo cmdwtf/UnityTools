@@ -1,3 +1,5 @@
+using System;
+
 using UnityEngine;
 
 namespace cmdwtf.UnityTools
@@ -6,6 +8,8 @@ namespace cmdwtf.UnityTools
 	{
 		public string Name => displayName;
 		public string displayName;
+
+		public event Action Validated;
 
 		protected virtual void OnValidate()
 		{
@@ -17,6 +21,8 @@ namespace cmdwtf.UnityTools
 			{
 				name = displayName;
 			}
+
+			Validated?.Invoke();
 		}
 
 		protected virtual void Reset()
