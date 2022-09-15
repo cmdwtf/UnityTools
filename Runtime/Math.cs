@@ -159,6 +159,12 @@ namespace cmdwtf.UnityTools
 			return ret;
 		}
 
+		public static float SmoothMax(float a, float b, float k)
+			=> Mathf.Log(Mathf.Exp(k * a) + Mathf.Exp(k * b)) / k;
+
+		public static float SmoothMin(float a, float b, float k)
+			=> -SmoothMax(-a, -b, k);
+
 		public static int ClosestMultiple(int x, int y)
 			=> (int)Mathf.Round((float)x/y) * y;
 
