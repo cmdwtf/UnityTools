@@ -1,8 +1,8 @@
 ﻿using System;
 
-using cmdwtf.UnityTools.Gizmos;
-
+#if UNITY_EDITOR
 using UnityEditor;
+#endif // UNITY_EDITOR
 
 using UnityEngine;
 
@@ -43,7 +43,12 @@ namespace cmdwtf.UnityTools.Gizmos
 		}
 
 		/// <inheritdoc />
-		public void DrawText(string text) => Handles.Label(Position, text);
+		public void DrawText(string text) 
+#if UNITY_EDITOR
+			=> Handles.Label(Position, text);
+#else
+		{ }
+#endif // UNITY_EDITOR
 
 		#endregion
 
