@@ -77,21 +77,39 @@ namespace cmdwtf.UnityTools
 			=> (m > max ? max : (m < min ? min : m));
 		public static Vector2 Clamp(this Vector2 v, Vector2 min, Vector2 max)
 			=> new Vector2(
-				v.x.Clamp(min.x, min.y),
+				v.x.Clamp(min.x, max.x),
 				v.y.Clamp(min.y, max.y)
+			);
+		public static Vector2 Clamp(this Vector2 v, float min, float max)
+			=> new Vector2(
+				v.x.Clamp(min, max),
+				v.y.Clamp(min, max)
 			);
 		public static Vector3 Clamp(this Vector3 v, Vector3 min, Vector3 max)
 			=> new Vector3(
-				v.x.Clamp(min.x, min.y),
+				v.x.Clamp(min.x, max.x),
 				v.y.Clamp(min.y, max.y),
 				v.z.Clamp(min.z, max.z)
 			);
+		public static Vector3 Clamp(this Vector3 v, float min, float max)
+			=> new Vector3(
+				v.x.Clamp(min, max),
+				v.y.Clamp(min, max),
+				v.z.Clamp(min, max)
+			);
 		public static Vector4 Clamp(this Vector4 v, Vector4 min, Vector4 max)
 			=> new Vector4(
-				v.x.Clamp(min.x, min.y),
+				v.x.Clamp(min.x, max.x),
 				v.y.Clamp(min.y, max.y),
 				v.z.Clamp(min.z, max.z),
 				v.w.Clamp(min.w, max.w)
+			);
+		public static Vector4 Clamp(this Vector4 v, float min, float max)
+			=> new Vector4(
+				v.x.Clamp(min, max),
+				v.y.Clamp(min, max),
+				v.z.Clamp(min, max),
+				v.w.Clamp(min, max)
 			);
 
 		public static short NthTriangular(this short n) => (short)((n * (n + 1)) / 2);
