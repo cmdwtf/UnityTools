@@ -188,5 +188,19 @@ namespace cmdwtf.UnityTools
 			float inT = Mathf.InverseLerp(inMin, inMax, value);
 			return Mathf.LerpUnclamped(outMin, outMax, inT);
 		}
+
+		internal static float FlatAngle(Vector2 v)
+		{
+			float angle = Vector2.SignedAngle(v, Vector2.up);
+			return (angle + 360.0f) % 360.0f;
+		}
+
+		internal static float FlatAngle(Vector3 v)
+		{
+			var flattened = new Vector2(v.x, v.z);
+			float angle = Vector2.SignedAngle(flattened, Vector2.up);
+			angle += 180.0f;
+			return angle % 360.0f;
+		}
 	}
 }

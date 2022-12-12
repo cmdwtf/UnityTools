@@ -118,5 +118,15 @@ namespace cmdwtf.UnityTools
 		public static float NthTriangular(this float n) => (n * (n + 1)) / 2.0f;
 		public static double NthTriangular(this double n) => (n * (n + 1)) / 2.0d;
 		public static decimal NthTriangular(this decimal n) => (n * (n + 1)) / 2.0m;
+
+		public static float AngleTo(this Vector2 v, Vector2 other)
+			=> Math.FlatAngle(other - v);
+		public static float AngleFrom(this Vector2 v, Vector2 other)
+			=> Math.FlatAngle(v - other);
+
+		public static float AngleTo(this Vector3 v, Vector3 other)
+			=> Math.FlatAngle(other - v);
+		public static float AngleFrom(this Vector3 v, Vector3 other)
+			=> Math.FlatAngle(v - other);
 	}
 }

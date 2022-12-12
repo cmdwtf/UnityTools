@@ -83,7 +83,7 @@ namespace cmdwtf.UnityTools
 		public static float FlatAngleTo(this Transform t, Component other) => t.FlatAngleTo(other.transform.position);
 
 		public static float FlatAngleTo(this Transform t, Vector3 other)
-			=> FlatAngle(other - t.transform.position);
+			=> Math.FlatAngle(other - t.transform.position);
 
 		public static float FlatAngleFrom(this Transform t, Transform other) => t.FlatAngleFrom(other.position);
 
@@ -92,14 +92,6 @@ namespace cmdwtf.UnityTools
 		public static float FlatAngleFrom(this Transform t, Component other) => t.FlatAngleFrom(other.transform.position);
 
 		public static float FlatAngleFrom(this Transform t, Vector3 other)
-			=> FlatAngle(t.transform.position - other);
-
-		private static float FlatAngle(Vector3 p)
-		{
-			Vector2 flattened = new Vector2(p.x, p.z);
-			float angle = Vector2.SignedAngle(flattened, Vector2.up);
-			angle += 180.0f;
-			return angle % 360.0f;
-		}
+			=> Math.FlatAngle(t.transform.position - other);
 	}
 }
