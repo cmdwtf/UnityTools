@@ -14,7 +14,7 @@ namespace cmdwtf.UnityTools
 		protected virtual void OnValidate()
 		{
 #if UNITY_EDITOR
-			displayName ??= this.GetAssetName() ?? string.Empty;
+			displayName ??= this.GetAssetName() ?? GetType().Name;
 #endif // UNITY_EDITOR
 
 			if (string.IsNullOrEmpty(name))
