@@ -15,53 +15,97 @@ namespace cmdwtf.UnityTools.Editor
 		public static Rect GetLastRect()
 			=> _lastRect ?? Rect.zero;
 
-		/// <inheritdoc cref="EditorGUI.DropdownButton(UnityEngine.Rect,UnityEngine.GUIContent,UnityEngine.FocusType)"/>
+		/// <inheritdoc cref="DropdownButtonLabeled(string,string,UnityEngine.FocusType,UnityEngine.GUIStyle,UnityEngine.GUIStyle,UnityEngine.GUILayoutOption[])"/>
 		public static bool DropdownButtonLabeled(string label,
 												 string dropdownContent,
 												 FocusType dropdownFocusType,
 												 GUIStyle labelStyle = null,
-												 GUIStyle dropdownStyle = null
+												 GUIStyle dropdownStyle = null,
+												 params GUILayoutOption[] layoutOptions
 		)
-			=> DropdownButtonLabeled(label.ToGUIContent(), dropdownContent.ToGUIContent(), dropdownFocusType, labelStyle, dropdownStyle);
+			=> DropdownButtonLabeled(label.ToGUIContent(), dropdownContent.ToGUIContent(), dropdownFocusType, labelStyle, dropdownStyle, layoutOptions);
 
-		/// <inheritdoc cref="EditorGUI.DropdownButton(UnityEngine.Rect,UnityEngine.GUIContent,UnityEngine.FocusType)"/>
+		/// <inheritdoc cref="DropdownButtonLabeled(string,string,UnityEngine.FocusType,UnityEngine.GUIStyle,UnityEngine.GUIStyle,UnityEngine.GUILayoutOption[])"/>
+		public static bool DropdownButtonLabeled(string label,
+												 string dropdownContent,
+												 FocusType dropdownFocusType,
+												 params GUILayoutOption[] layoutOptions
+		)
+			=> DropdownButtonLabeled(label.ToGUIContent(), dropdownContent.ToGUIContent(), dropdownFocusType, null, null, layoutOptions);
+
+		/// <inheritdoc cref="DropdownButtonLabeled(string,string,UnityEngine.FocusType,UnityEngine.GUIStyle,UnityEngine.GUIStyle,UnityEngine.GUILayoutOption[])"/>
 		public static bool DropdownButtonLabeled(string label,
 												 GUIContent dropdownContent,
 												 FocusType dropdownFocusType,
 												 GUIStyle labelStyle = null,
-												 GUIStyle dropdownStyle = null
+												 GUIStyle dropdownStyle = null,
+												 params GUILayoutOption[] layoutOptions
 		)
-			=> DropdownButtonLabeled(label.ToGUIContent(), dropdownContent, dropdownFocusType, labelStyle, dropdownStyle);
+			=> DropdownButtonLabeled(label.ToGUIContent(), dropdownContent, dropdownFocusType, labelStyle, dropdownStyle, layoutOptions);
 
-		/// <inheritdoc cref="EditorGUI.DropdownButton(UnityEngine.Rect,UnityEngine.GUIContent,UnityEngine.FocusType)"/>
+		/// <inheritdoc cref="DropdownButtonLabeled(string,string,UnityEngine.FocusType,UnityEngine.GUIStyle,UnityEngine.GUIStyle,UnityEngine.GUILayoutOption[])"/>
+		public static bool DropdownButtonLabeled(string label,
+												 GUIContent dropdownContent,
+												 FocusType dropdownFocusType,
+												 params GUILayoutOption[] layoutOptions
+		)
+			=> DropdownButtonLabeled(label.ToGUIContent(), dropdownContent, dropdownFocusType, null, null, layoutOptions);
+
+		/// <inheritdoc cref="DropdownButtonLabeled(string,string,UnityEngine.FocusType,UnityEngine.GUIStyle,UnityEngine.GUIStyle,UnityEngine.GUILayoutOption[])"/>
 		public static bool DropdownButtonLabeled(GUIContent label,
 												 string dropdownContent,
 												 FocusType dropdownFocusType,
 												 GUIStyle labelStyle = null,
-												 GUIStyle dropdownStyle = null
+												 GUIStyle dropdownStyle = null,
+												 params GUILayoutOption[] layoutOptions
 		)
-			=> DropdownButtonLabeled(label, dropdownContent.ToGUIContent(), dropdownFocusType, labelStyle, dropdownStyle);
+			=> DropdownButtonLabeled(label, dropdownContent.ToGUIContent(), dropdownFocusType, labelStyle, dropdownStyle, layoutOptions);
 
-		/// <inheritdoc cref="EditorGUI.DropdownButton(UnityEngine.Rect,UnityEngine.GUIContent,UnityEngine.FocusType)"/>
+		/// <inheritdoc cref="DropdownButtonLabeled(string,string,UnityEngine.FocusType,UnityEngine.GUIStyle,UnityEngine.GUIStyle,UnityEngine.GUILayoutOption[])"/>
+		public static bool DropdownButtonLabeled(GUIContent label,
+												 string dropdownContent,
+												 FocusType dropdownFocusType,
+												 params GUILayoutOption[] layoutOptions
+		)
+			=> DropdownButtonLabeled(label, dropdownContent.ToGUIContent(), dropdownFocusType, null, null, layoutOptions);
+
+		/// <inheritdoc cref="DropdownButtonLabeled(string,string,UnityEngine.FocusType,UnityEngine.GUIStyle,UnityEngine.GUIStyle,UnityEngine.GUILayoutOption[])"/>
+		public static bool DropdownButtonLabeled(GUIContent label,
+												 GUIContent dropdownContent,
+												 FocusType dropdownFocusType,
+												 params GUILayoutOption[] layoutOptions)
+			=> DropdownButtonLabeled(label, dropdownContent, dropdownFocusType, null, null, layoutOptions);
+
+		/// <summary>
+		/// Draws a dropdown button with a label.
+		/// </summary>
+		/// <param name="label">The label text.</param>
+		/// <param name="dropdownContent">What content should be on the button.</param>
+		/// <param name="dropdownFocusType">The type of focus the button should use.</param>
+		/// <param name="labelStyle">The optional style to draw the label with.</param>
+		/// <param name="dropdownStyle">The optional style to draw the button with.</param>
+		/// <param name="layoutOptions">Optional layout options.</param>
+		/// <returns><see langword="true"/>, if the button was clicked.</returns>
 		public static bool DropdownButtonLabeled(GUIContent label,
 												 GUIContent dropdownContent,
 												 FocusType dropdownFocusType,
 												 GUIStyle labelStyle = null,
-												 GUIStyle dropdownStyle = null
+												 GUIStyle dropdownStyle = null,
+												 params GUILayoutOption[] layoutOptions
 		)
 		{
 			// get a 'whole' rect for our control.
-			Rect rect = EditorGUILayout.GetControlRect();
+			Rect rect = EditorGUILayout.GetControlRect(layoutOptions);
 
 			// duplicate the main rect, and shrink it
-			// to 40% for the label.
+			// to the size for for the label.
 			var labelRect = new Rect(rect) { width = EditorGUIUtility.labelWidth };
 
 			// duplicate the main rect, and shrink it
-			// to 60% for the dropdown button, and
+			// to the remaining size for the dropdown button, and
 			// scoot it over the width of the label.
 			var dropdownRect = new Rect(rect);
-			dropdownRect.width = EditorGUIUtility.fieldWidth;
+			dropdownRect.width -= labelRect.width;
 			dropdownRect.x += labelRect.width;
 
 			// draw the label
