@@ -1,9 +1,14 @@
+using System.Linq;
+
 using UnityEngine;
 
 namespace cmdwtf.UnityTools
 {
 	public static class TransformExtensions
 	{
+		public static int ActiveChildCount(this Transform target)
+			=> target.Cast<Transform>().Count(child => child.gameObject.activeSelf);
+
 		public static bool IsChildOf(this Transform target, Transform potentialParent)
 		{
 			Transform test = target;
