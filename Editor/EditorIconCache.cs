@@ -20,9 +20,7 @@ namespace cmdwtf.UnityTools.Editor
 		{
 			InitializeIcons();
 			InitializeIconContentLists();
-
 			Resources.UnloadUnusedAssets();
-			System.GC.Collect();
 		}
 
 		/// <summary>

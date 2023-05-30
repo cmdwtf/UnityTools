@@ -98,7 +98,7 @@ namespace cmdwtf.UnityTools.Editor
 		// window state
 		private Vector2 _scroll;
 
-		private void OnEnable()
+		private void CreateGUI()
 		{
 			_cache ??= new EditorIconCache();
 			InitializeGUIStyles();

@@ -156,13 +156,6 @@ namespace cmdwtf.UnityTools.Editor
 
 		public void AddAlternateName(string alternateName)
 		{
-			string altSort = GetSortName(alternateName);
-			if (SortName != altSort)
-			{
-				throw new ArgumentOutOfRangeException(nameof(alternateName),
-													  $"Alternate name's sorting form (`{altSort}`) must match the sorting name: `{SortName}`");
-			}
-
 			_names.Add(alternateName);
 		}
 
