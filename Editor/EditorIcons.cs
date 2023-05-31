@@ -111,6 +111,18 @@ namespace cmdwtf.UnityTools.Editor
 			OnGUIInfoPane();
 		}
 
+		private void OnGUIRefreshIconsButton()
+		{
+			if (GUILayout.Button(_refreshIcon, EditorStyles.toolbarButton) == false)
+			{
+				return;
+			}
+
+			_selectedIcon = null;
+			_selectedIconNameIndex = 0;
+			_cache = new EditorIconCache();
+		}
+
 		/// <summary>
 		/// Draws the window toolbar, including icon size choice and search field.
 		/// </summary>
@@ -124,12 +136,7 @@ namespace cmdwtf.UnityTools.Editor
 			_searchField ??= new SearchField();
 			_searchQuery = _searchField.OnGUI(_searchQuery);
 
-			if (GUILayout.Button(_refreshIcon, EditorStyles.toolbarButton))
-			{
-				_selectedIcon = null;
-				_selectedIconNameIndex = 0;
-				_cache = new EditorIconCache();
-			}
+			OnGUIRefreshIconsButton();
 		}
 
 		/// <summary>
@@ -138,6 +145,12 @@ namespace cmdwtf.UnityTools.Editor
 		/// </summary>
 		private void OnGUIIconGrid()
 		{
+			if (_cache == null)
+			{
+				OnGUIRefreshIconsButton();
+				return;
+			}
+		
 			using GUILayout.ScrollViewScope scrollViewScope = new(_scroll);
 
 			GUILayout.Space(LargeSpacePx);
