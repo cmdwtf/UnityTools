@@ -1,5 +1,7 @@
 using cmdwtf.UnityTools.UI;
 
+#if USE_UNITY_UI
+
 using UnityEditor;
 using UnityEditor.UI;
 
@@ -39,3 +41,5 @@ namespace cmdwtf.UnityTools.Editor
 		#endregion
 	}
 }
+
+#endif // USE_UNITY_UI

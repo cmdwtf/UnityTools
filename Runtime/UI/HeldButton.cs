@@ -1,5 +1,7 @@
 using System;
 
+#if USE_UNITY_UI
+
 using UnityEngine;
 using UnityEngine.Events;
 using UnityEngine.EventSystems;
@@ -66,3 +68,5 @@ namespace cmdwtf.UnityTools.UI
 		#endregion
 	}
 }
+
+#endif // USE_UNITY_UI
