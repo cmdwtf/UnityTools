@@ -1,5 +1,3 @@
-using System;
-
 using UnityEngine;
 
 namespace cmdwtf.UnityTools
@@ -128,5 +126,8 @@ namespace cmdwtf.UnityTools
 			=> Math.FlatAngle(other - v);
 		public static float AngleFrom(this Vector3 v, Vector3 other)
 			=> Math.FlatAngle(v - other);
+
+		public static float NormalizeAngle(this float f)
+			=> Math.NormalizeAngle(f);
 	}
 }

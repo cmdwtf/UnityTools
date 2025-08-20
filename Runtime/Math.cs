@@ -4,6 +4,9 @@ namespace cmdwtf.UnityTools
 {
 	public static class Math
 	{
+		private const float DegreesInCircle = 360.0f;
+		private const float DegreesInHalfCircle = 180.0f;
+
 		public static sbyte MakePositive(sbyte b) => (sbyte)(b < 0 ? b * -1 : b);
 		public static short MakePositive(short s) => (short)(s < 0 ? s * -1 : s);
 		public static int MakePositive(int i) => i < 0 ? i * -1 : i;
@@ -23,7 +26,7 @@ namespace cmdwtf.UnityTools
 		public static float PercentOf(float min, float max, float t)
 		{
 			float distance = max - min;
-			float percent = (t-min)/distance;
+			float percent = (t - min) / distance;
 
 			if (t < min)
 			{
@@ -101,18 +104,34 @@ namespace cmdwtf.UnityTools
 			   || a + epsilon <= b
 			   || a - epsilon <= b;
 
+		/// <summary>
+		/// Wraps <paramref name="angle"/> to the range of (-180, 180].
+		/// </summary>
+		/// <param name="angle">The angle to wrap</param>
+		/// <returns>The angle value wrapped to (-180, 180]</returns>
+		public static float NormalizeAngle(float angle)
+		{
+			float offset = (Mathf.Ceil((angle + DegreesInHalfCircle) / DegreesInCircle) - 1.0f) * DegreesInCircle;
+			return angle - offset;
+		}
+
 		public static short KeepIn360Degrees(short angle)
 			=> Repeat(angle, (short)360);
 		public static int KeepIn360Degrees(int angle)
 			=> Repeat(angle, 360);
 		public static long KeepIn360Degrees(long angle)
 			=> Repeat(angle, 360);
+		public static float KeepIn360Degrees(float angle)
+			=> Repeat(angle, 360.0f);
+
 		public static short Repeat(short t, short length)
 			=> (short)Mathf.Repeat(t, length);
 		public static int Repeat(int t, int length)
 			=> (int)Mathf.Repeat(t, length);
 		public static long Repeat(long t, long length)
 			=> (long)Mathf.Repeat(t, length);
+		public static float Repeat(float t, float length)
+			=> Mathf.Repeat(t, length);
 
 		public static float SmoothStep(float from, float to, float t)
 			// this exists in the unity math library
@@ -166,13 +185,13 @@ namespace cmdwtf.UnityTools
 			=> -SmoothMax(-a, -b, k);
 
 		public static int ClosestMultiple(int x, int y)
-			=> (int)Mathf.Round((float)x/y) * y;
+			=> (int)Mathf.Round((float)x / y) * y;
 
 		public static float ClosestMultiple(float x, float y)
-			=> Mathf.Round(x/y) * y;
+			=> Mathf.Round(x / y) * y;
 
 		public static double ClosestMultiple(double x, double y)
-			=> System.Math.Round(x/y) * y;
+			=> System.Math.Round(x / y) * y;
 
 		public static Vector3 RandomVector(float min, float max)
 			=> new Vector3(Random.Range(min, max), Random.Range(min, max), Random.Range(min, max));
