@@ -98,5 +98,15 @@ namespace cmdwtf.UnityTools
 
 		public static float FlatAngleFrom(this Transform t, Vector3 other)
 			=> Math.FlatAngle(t.transform.position - other);
+
+		public static void SetParentAndStretchUI(this RectTransform rt, Transform parent)
+		{
+			rt.SetParent(parent, worldPositionStays: false);
+			rt.pivot = Vector2.one * 0.5f;
+			rt.anchorMin = Vector2.zero;
+			rt.anchorMax = Vector2.one;
+			rt.sizeDelta = Vector2.zero;
+			rt.anchoredPosition = Vector2.zero;
+		}
 	}
 }

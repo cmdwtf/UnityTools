@@ -1,4 +1,7 @@
+using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 
 using cmdwtf.UnityTools.Attributes;
 
@@ -11,7 +14,13 @@ namespace cmdwtf.UnityTools.UI
 		[SerializeField, Autohook]
 		private TPageContainer pages;
 
-		private void Reset()
+		private GameObject _underlayParent;
+		private GameObject _overlayParent;
+		private PageLayer[] _layers;
+
+		public event EventHandler<PageSwitchingEventArgs> PageSwitching;
+
+		protected virtual void Reset()
 		{
 			var existing = GetComponent<TPageContainer>();
 			if (existing != null)
@@ -24,7 +33,7 @@ namespace cmdwtf.UnityTools.UI
 			pages = newContainer;
 		}
 
-		private void Awake()
+		protected virtual void Awake()
 		{
 			if (pages == null)
 			{
@@ -35,6 +44,7 @@ namespace cmdwtf.UnityTools.UI
 
 			// load up the page names with the pages in the window manager.
 			Page[] childPages = GetComponentsInChildren<Page>();
+
 			foreach (Page page in childPages)
 			{
 				// skip disabled pages
@@ -45,9 +55,11 @@ namespace cmdwtf.UnityTools.UI
 
 				pages.AddPage(page.GetDescription());
 			}
+
+			SetupLayers(childPages);
 		}
 
-		private void Start()
+		protected virtual void Start()
 		{
 			// set our initial page
 			pages.OpenFirstPage();
@@ -61,21 +73,36 @@ namespace cmdwtf.UnityTools.UI
 				return;
 			}
 
-			Page current = GetActivePage();
+			Page currentPage = GetActivePage();
 
-			current.OnPageHiding();
+			PageSwitchingEventArgs args = new(nextPage, currentPage);
+
+			PageSwitching?.Invoke(this, args);
+
+			if (args.CancelSwitch)
+			{
+				Debug.Log("Page switch cancelled by event.");
+				return;
+			}
+
+			foreach (PageLayer l in _layers)
+			{
+				l.OnPageSwitching(args);
+			}
+
+			currentPage.OnPageHiding();
 			nextPage.OnPageShowing();
 
 			pages.OpenPage(nextPage.name);
 
-			StartCoroutine(HidingCoroutine(current));
+			StartCoroutine(HidingCoroutine(currentPage));
 
 			nextPage.IsShown = true;
 			nextPage.OnPageShown();
 
 			IEnumerator HidingCoroutine(Page page)
 			{
-				current.IsHiding = true;
+				currentPage.IsHiding = true;
 
 				// don't mark the page hidden
 				// until it's completely faded out.
@@ -87,6 +114,64 @@ namespace cmdwtf.UnityTools.UI
 				page.IsHiding = false;
 				page.IsShown = false;
 				page.OnPageHidden();
+			}
+		}
+
+		private void SetupLayers(IEnumerable<Page> pages)
+		{
+			// find or create underlay parent
+			PageUnderlayParent ulp = GetComponentInChildren<PageUnderlayParent>();
+
+			if (ulp != null)
+			{
+				_underlayParent = ulp.gameObject;
+			}
+			else
+			{
+				_underlayParent = new GameObject($"{gameObject.name} — Underlays",
+					typeof(RectTransform), typeof(PageUnderlayParent));
+			}
+
+			RectTransform ulpt = (RectTransform)_underlayParent.transform;
+
+			ulpt.SetParentAndStretchUI(transform);
+			ulpt.SetAsFirstSibling();
+
+			// find or create overlay parent
+			PageOverlayParent olp = GetComponentInChildren<PageOverlayParent>();
+
+			if (olp != null)
+			{
+				_overlayParent = olp.gameObject;
+			}
+			else
+			{
+				_overlayParent = new GameObject($"{gameObject.name} — Overlays",
+					typeof(RectTransform), typeof(PageOverlayParent));
+			}
+
+			RectTransform olpt = (RectTransform)_overlayParent.transform;
+
+			olpt.SetParentAndStretchUI(transform);
+			olpt.SetAsLastSibling();
+
+			// move all the page layers to their correct parents,
+			// and let them know what pages they belong to.
+			_layers = GetComponentsInChildren<PageLayer>();
+
+			foreach (PageLayer layer in _layers)
+			{
+				Transform layerParent = layer.Type == PageLayerType.Overlay
+					? _overlayParent.transform
+					: _underlayParent.transform;
+
+				layer.transform.SetParent(layerParent, worldPositionStays: false);
+
+				layer.TargetPages = layer.IsGlobalLayer
+						? pages.ToArray()
+						: pages.Where(
+								p => p.overlays.Contains(layer) || p.underlays.Contains(layer)
+							).ToArray();
 			}
 		}
 
