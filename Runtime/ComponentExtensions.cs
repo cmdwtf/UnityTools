@@ -79,7 +79,7 @@ namespace cmdwtf.UnityTools
 
 			Vector3 thisPos = component.gameObject.transform.position;
 
-			return Object.FindObjectsOfType<T>()
+			return Object.FindObjectsByType<T>(FindObjectsSortMode.None)
 						 .OrderBy(o => (o.gameObject.transform.position - thisPos).sqrMagnitude)
 						 .FirstOrDefault();
 		}

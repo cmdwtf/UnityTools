@@ -1,8 +1,8 @@
-using UnityEngine;
+using System.Collections.Generic;
 
 using UnityEditor;
 
-using System.Collections.Generic;
+using UnityEngine;
 
 namespace cmdwtf.UnityTools.Editor
 {
@@ -13,9 +13,9 @@ namespace cmdwtf.UnityTools.Editor
 			public int depth;
 			public string info;
 			public string val;
-			public int oid;
+			public EntityId eid;
 
-			public SPData(int d, string i, string v, int o)
+			public SPData(int d, string i, string v, EntityId e)
 			{
 				if (d < 0)
 				{
@@ -25,7 +25,7 @@ namespace cmdwtf.UnityTools.Editor
 				depth = d;
 				info = i;
 				val = v;
-				oid = o;
+				eid = e;
 			}
 		}
 
@@ -89,17 +89,17 @@ namespace cmdwtf.UnityTools.Editor
 			foreach (SPData line in data)
 			{
 				EditorGUI.indentLevel = line.depth;
-				if (line.oid > 0)
+				if (line.eid.IsValid())
 				{
 					GUILayout.BeginHorizontal();
 				}
 
 				EditorGUILayout.LabelField(line.info, richTextStyle);
-				if (line.oid > 0)
+				if (line.eid.IsValid())
 				{
 					if (GUILayout.Button(">>", GUILayout.Width(50)))
 					{
-						Selection.activeInstanceID = line.oid;
+						Selection.activeEntityId = line.eid;
 					}
 
 					GUILayout.EndHorizontal();

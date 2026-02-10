@@ -15,7 +15,7 @@ namespace cmdwtf.UnityTools
 #if !UNITY_EDITOR
 			throw new System.NotSupportedException($"{nameof(GetAssetName)} is only supported in the editor.");
 #else // UNITY_EDITOR
-			string assetPath = AssetDatabase.GetAssetPath(obj.GetInstanceID());
+			string assetPath = AssetDatabase.GetAssetPath(obj.GetEntityId());
 
 			return !string.IsNullOrEmpty(assetPath)
 					   ? Path.GetFileNameWithoutExtension(assetPath)

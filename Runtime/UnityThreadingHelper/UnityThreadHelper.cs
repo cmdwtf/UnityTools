@@ -23,7 +23,7 @@ public class UnityThreadHelper
 #if !NO_UNITY
             if (null == (object)instance)
             {
-                instance = FindObjectOfType(typeof(UnityThreadHelper)) as UnityThreadHelper;
+                instance = FindFirstObjectByType<UnityThreadHelper>();
                 if (null == (object)instance)
                 {
                     var go = new GameObject("[UnityThreadHelper]");

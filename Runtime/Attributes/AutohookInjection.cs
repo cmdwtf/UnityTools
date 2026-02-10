@@ -97,7 +97,7 @@ namespace cmdwtf.UnityTools.Attributes
 
 		private static void Inject()
 		{
-			MonoBehaviour[] behaviors = Object.FindObjectsOfType<MonoBehaviour>();
+			MonoBehaviour[] behaviors = Object.FindObjectsByType<MonoBehaviour>(FindObjectsSortMode.None);
 			foreach (MonoBehaviour behavior in behaviors)
 			{
 				Type behaviorType = behavior.GetType();

@@ -6,7 +6,7 @@ namespace cmdwtf.UnityTools
 	{
 		public static void BroadcastAll(this GameObject _, string fun, object msg)
 		{
-			var gos = (GameObject[])Object.FindObjectsOfType(typeof(GameObject));
+			GameObject[] gos = Object.FindObjectsByType<GameObject>(FindObjectsSortMode.None);
 			foreach (GameObject go in gos)
 			{
 				if (go && go.transform.parent == null)
@@ -21,7 +21,7 @@ namespace cmdwtf.UnityTools
 
 		public static bool IsChildOf(this GameObject testObject, GameObject potentialParent)
 			=> testObject.transform.IsChildOf(potentialParent.transform);
-		
+
 		public static bool IsChildOf(this GameObject testObject, Component potentialParent)
 			=> testObject.transform.IsChildOf(potentialParent.transform);
 
@@ -42,7 +42,7 @@ namespace cmdwtf.UnityTools
 				cps.Stop();
 			}
 		}
-		
+
 		public static void SetPositionAs(this GameObject lhs, GameObject rhs)
 		{
 			lhs.transform.SetPositionAs(rhs);
@@ -52,12 +52,12 @@ namespace cmdwtf.UnityTools
 		{
 			lhs.transform.SetPositionAs(rhs);
 		}
-		
+
 		public static void RotateTo(this GameObject go, float x, float y, float z)
 		{
 			go.transform.RotateTo(x, y, z);
 		}
-		
+
 		public static void ScaleTo(this GameObject go, float x, float y, float z)
 		{
 			go.transform.ScaleTo(x, y, z);
@@ -80,7 +80,7 @@ namespace cmdwtf.UnityTools
 
 		public static float DistanceFrom(this GameObject go, GameObject other)
 			=> go.transform.DistanceFrom(other.transform.position);
-		
+
 		public static float DistanceFrom(this GameObject go, Component other)
 			=> go.transform.DistanceFrom(other.transform.position);
 
@@ -93,7 +93,7 @@ namespace cmdwtf.UnityTools
 
 		public static float FlatAngleTo(this GameObject go, GameObject other)
 			=> go.transform.FlatAngleTo(other.transform.position);
-		
+
 		public static float FlatAngleTo(this GameObject go, Component other)
 			=> go.transform.FlatAngleTo(other.transform.position);
 
@@ -115,22 +115,22 @@ namespace cmdwtf.UnityTools
 		#region Cube Bounds of Object
 
 		public static Vector3 GetLeft(this GameObject go)
-			=> (go.transform.position - go.transform.right * go.transform.localScale.x/2);
+			=> (go.transform.position - go.transform.right * go.transform.localScale.x / 2);
 
 		public static Vector3 GetRight(this GameObject go)
-			=> (go.transform.position + go.transform.right * go.transform.localScale.x/2);
+			=> (go.transform.position + go.transform.right * go.transform.localScale.x / 2);
 
 		public static Vector3 GetTop(this GameObject go)
-			=> (go.transform.position + go.transform.up * go.transform.localScale.y/2);
+			=> (go.transform.position + go.transform.up * go.transform.localScale.y / 2);
 
 		public static Vector3 GetBottom(this GameObject go)
-			=> (go.transform.position - go.transform.up * go.transform.localScale.y/2);
+			=> (go.transform.position - go.transform.up * go.transform.localScale.y / 2);
 
 		public static Vector3 GetFront(this GameObject go)
-			=> (go.transform.position + go.transform.forward * go.transform.localScale.z/2);
+			=> (go.transform.position + go.transform.forward * go.transform.localScale.z / 2);
 
 		public static Vector3 GetBack(this GameObject go)
-			=> (go.transform.position - go.transform.forward * go.transform.localScale.z/2);
+			=> (go.transform.position - go.transform.forward * go.transform.localScale.z / 2);
 
 		#endregion Cube Bounds of Object
 	}

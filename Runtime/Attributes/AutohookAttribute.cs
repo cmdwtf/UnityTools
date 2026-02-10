@@ -19,7 +19,7 @@ namespace cmdwtf.UnityTools.Attributes
 	/// </summary>
 	[AttributeUsage(AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
 	public class AutohookAttribute : PropertyAttribute
-    {
+	{
 		// binding flags used to reflect on types.
 		public const BindingFlags BindingFlags = System.Reflection.BindingFlags.IgnoreCase
 												  | System.Reflection.BindingFlags.Public
@@ -33,12 +33,12 @@ namespace cmdwtf.UnityTools.Attributes
 
 		public AutohookAttribute()
 			: this(AutohookContext.Self, AutohookVisibility.Default, AutohookTemporality.Editor, string.Empty)
-        { }
+		{ }
 
-        public AutohookAttribute(AutohookContext context)
+		public AutohookAttribute(AutohookContext context)
 			: this()
-        {
-            Context = context;
+		{
+			Context = context;
 		}
 
 		public AutohookAttribute(AutohookVisibility visibility)
@@ -74,9 +74,9 @@ namespace cmdwtf.UnityTools.Attributes
 								 AutohookTemporality temporality,
 								 string target
 			)
-        {
-            Context = context;
-            Visibility = visibility;
+		{
+			Context = context;
+			Visibility = visibility;
 			Temporality = temporality;
 			Target = target;
 		}
@@ -109,7 +109,7 @@ namespace cmdwtf.UnityTools.Attributes
 			switch (Context)
 			{
 				case AutohookContext.Scene:
-					return Object.FindObjectOfType(type) as Component;
+					return Object.FindFirstObjectByType(type) as Component;
 				case AutohookContext.Target:
 				case AutohookContext.Tagged:
 					return GetTargetGameObject().GetComponent(type);
